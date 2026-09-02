@@ -374,7 +374,7 @@
 
               <div>
                 <label class="block font-semibold text-slate-300 mb-1">Quantity</label>
-                <input type="number" inputmode="numeric" id="handover-qty" onfocus="this.select()" min="1" value="1" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-emerald-500" />
+                <input type="text" inputmode="numeric" id="handover-qty" onfocus="this.select()" min="1" value="1" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-emerald-500" />
               </div>
             </div>
 
@@ -658,14 +658,14 @@
           </div>
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Total Ordered Qty *</label>
-            <input type="number" inputmode="numeric" id="form-item-qty" required min="1" placeholder="Type quantity (e.g. 200)" onfocus="this.select()" oninput="handleOrderedQtyInput(this.value)" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500 font-semibold" />
+            <input type="text" inputmode="numeric" id="form-item-qty" required placeholder="Enter quantity (e.g. 200)" onfocus="this.select()" oninput="handleOrderedQtyInput(this.value)" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500 font-semibold" />
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Unit Price (₹) *</label>
-            <input type="number" inputmode="numeric" id="form-item-cost" onfocus="this.select()" required min="0" placeholder="120" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500" />
+            <input type="text" inputmode="decimal" id="form-item-cost" required placeholder="Enter price in ₹ (e.g. 120)" onfocus="this.select()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500 font-semibold" />
           </div>
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Storage Room / Rack</label>
@@ -689,11 +689,11 @@
           <div id="form-qc-expanded" class="hidden grid grid-cols-2 gap-3 pt-2 border-t border-slate-800">
             <div>
               <label class="block font-semibold text-emerald-400 mb-1">QC Passed Count *</label>
-              <input type="number" id="form-item-passed" min="0" placeholder="195" oninput="calculateDefectsFromPassed()" class="w-full p-2 rounded-lg bg-slate-800 border border-slate-700 text-white font-bold" />
+              <input type="text" id="form-item-passed" min="0" placeholder="195" oninput="calculateDefectsFromPassed()" class="w-full p-2 rounded-lg bg-slate-800 border border-slate-700 text-white font-bold" />
             </div>
             <div>
               <label class="block font-semibold text-rose-400 mb-1">Defects Count</label>
-              <input type="number" id="form-item-defects" min="0" value="0" oninput="calculatePassedFromDefects()" class="w-full p-2 rounded-lg bg-slate-800 border border-slate-700 text-white font-bold" />
+              <input type="text" id="form-item-defects" min="0" value="0" oninput="calculatePassedFromDefects()" class="w-full p-2 rounded-lg bg-slate-800 border border-slate-700 text-white font-bold" />
             </div>
           </div>
         </div>
@@ -721,11 +721,11 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Total Count Inspected *</label>
-            <input type="number" inputmode="numeric" id="qc-form-count" onfocus="this.select()" required min="1" placeholder="200" oninput="calculateQCFields()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+            <input type="text" inputmode="numeric" id="qc-form-count" onfocus="this.select()" required min="1" placeholder="200" oninput="calculateQCFields()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
           </div>
           <div>
             <label class="block font-semibold text-rose-400 mb-1">Defective Items (if any)</label>
-            <input type="number" id="qc-form-defects" min="0" value="0" oninput="calculateQCFields()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+            <input type="text" id="qc-form-defects" min="0" value="0" oninput="calculateQCFields()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
           </div>
         </div>
         <div class="p-2.5 rounded-xl bg-slate-900 text-emerald-400 text-xs font-bold flex items-center justify-between">
@@ -777,7 +777,7 @@
           </div>
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Safety Buffer (Days)</label>
-            <input type="number" id="vend-buffer" min="1" value="7" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+            <input type="text" id="vend-buffer" min="1" value="7" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
           </div>
         </div>
         <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-700">
@@ -807,21 +807,21 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Quoted Rate (₹) *</label>
-            <input type="number" id="quote-rate" required min="1" placeholder="540" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+            <input type="text" id="quote-rate" required min="1" placeholder="540" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
           </div>
           <div>
             <label class="block font-semibold text-slate-300 mb-1">GST %</label>
-            <input type="number" id="quote-gst" min="0" max="28" value="12" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+            <input type="text" id="quote-gst" min="0" max="28" value="12" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
           </div>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Lead Time (Days)</label>
-            <input type="number" id="quote-lead" min="1" value="12" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+            <input type="text" id="quote-lead" min="1" value="12" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
           </div>
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Safety Buffer (Days)</label>
-            <input type="number" id="quote-buffer" min="1" value="8" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+            <input type="text" id="quote-buffer" min="1" value="8" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
           </div>
         </div>
         <div>
@@ -1638,8 +1638,10 @@
       e.preventDefault();
       const name = document.getElementById('form-item-name').value.trim();
       const cat = document.getElementById('form-item-cat').value;
-      const qty = parseInt(document.getElementById('form-item-qty').value) || 1;
-      const cost = parseFloat(document.getElementById('form-item-cost').value) || 0;
+      const rawQty = (document.getElementById('form-item-qty').value || '').toString().replace(/[^0-9]/g, '');
+      const rawCost = (document.getElementById('form-item-cost').value || '').toString().replace(/[^0-9.]/g, '');
+      const qty = parseInt(rawQty) || 1;
+      const cost = parseFloat(rawCost) || 0;
       const loc = document.getElementById('form-item-loc').value.trim();
       const status = document.getElementById('form-item-status').value;
 
