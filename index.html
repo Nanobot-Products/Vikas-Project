@@ -88,7 +88,7 @@
             <div class="flex items-center gap-2">
               <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white">Dashboard</h1>
               <span class="px-2 py-0.5 text-[11px] font-extrabold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                v3.0 All Tabs Live
+                v3.1 Supplier Notes & Details
               </span>
             </div>
             <p class="text-xs text-slate-400">Vikas Jeerawala • Procurement, Vendor & Distribution Suite</p>
@@ -734,6 +734,10 @@
             <input type="text" id="vend-buffer" value="7" onfocus="this.select()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold" />
           </div>
         </div>
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Supplier Notes / Details (Optional)</label>
+          <textarea id="vend-notes" rows="2" placeholder="e.g. Payment terms (50% advance), GST number, sample sign-off notes, delivery contact..." class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs"></textarea>
+        </div>
         <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-700">
           <button type="button" onclick="closeVendorModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold">Cancel</button>
           <button type="submit" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold">Add Supplier</button>
@@ -776,10 +780,11 @@
 
       if (!appState.vendors || appState.vendors.length === 0) {
         appState.vendors = [
-          { id: 'VEND-01', name: 'Marwar Craft & Heritage Emporium', contactPerson: 'Rameshwar Gehlot', phone: '+91 98290 12345', city: 'Jodhpur, Rajasthan', deliveryBufferDays: 8, rating: 4.9 },
-          { id: 'VEND-02', name: 'ThreadCraft Apparel Innovations', contactPerson: 'Sunil Verma', phone: '+91 98101 88765', city: 'Jaipur, Rajasthan', deliveryBufferDays: 10, rating: 4.7 },
-          { id: 'VEND-03', name: 'Apex Memento & Crystals', contactPerson: 'Gaurav Singhal', phone: '+91 97110 44321', city: 'Delhi NCR', deliveryBufferDays: 6, rating: 4.8 },
-          { id: 'VEND-04', name: 'PrintMatrix Fine Media', contactPerson: 'Dharmendra Choudhary', phone: '+91 94141 55667', city: 'Jodhpur / Ahmedabad', deliveryBufferDays: 5, rating: 4.6 }
+          { id: 'VEND-01', name: 'Marwar Craft & Heritage Emporium', contactPerson: 'Rameshwar Gehlot', phone: '+91 98290 12345', city: 'Jodhpur, Rajasthan', deliveryBufferDays: 8, rating: 4.9, notes: 'Specialized in handcrafted brass & blue pottery VIP gift boxes. Sample approved by core team.' },
+          { id: 'VEND-02', name: 'ThreadCraft Apparel Innovations', contactPerson: 'Sunil Verma', phone: '+91 98101 88765', city: 'Jaipur, Rajasthan', deliveryBufferDays: 10, rating: 4.7, notes: '240 GSM bio-wash pique cotton polo t-shirts & heavy canvas tote bags. Direct factory delivery.' },
+          { id: 'VEND-03', name: 'Apex Memento & Crystals', contactPerson: 'Gaurav Singhal', phone: '+91 97110 44321', city: 'Delhi NCR', deliveryBufferDays: 6, rating: 4.8,
+        notes: notes || '' },
+          { id: 'VEND-04', name: 'PrintMatrix Fine Media', contactPerson: 'Dharmendra Choudhary', phone: '+91 94141 55667', city: 'Jodhpur / Ahmedabad', deliveryBufferDays: 5, rating: 4.6, notes: 'Gold foil embossed certificates, hardcover delegate notebooks & metal executive pens.' }
         ];
       }
 
@@ -1365,6 +1370,15 @@
                 </button>
               </div>
             </div>
+            ${v.notes ? `
+              <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-750 text-[11px] text-slate-300 flex items-start gap-2">
+                <i data-lucide="file-text" class="w-3.5 h-3.5 text-indigo-400 mt-0.5 flex-shrink-0"></i>
+                <div class="flex-1">
+                  <span class="font-semibold text-slate-400 block text-[10px]">Supplier Details & Notes:</span>
+                  <span>${v.notes}</span>
+                </div>
+              </div>
+            ` : ''}
             <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
               <a href="tel:${v.phone}" class="font-bold text-indigo-400 hover:underline">📞 ${v.phone}</a>
               <span class="text-slate-400">Safety Buffer: <strong class="text-emerald-400">${v.deliveryBufferDays || 7} days</strong></span>
@@ -1405,6 +1419,7 @@
       document.getElementById('vend-phone').value = '';
       document.getElementById('vend-city').value = '';
       document.getElementById('vend-buffer').value = '7';
+      document.getElementById('vend-notes').value = '';
       
       const m = document.getElementById('modal-vendor');
       if (m) {
@@ -1428,6 +1443,7 @@
       const phone = document.getElementById('vend-phone').value.trim();
       const city = document.getElementById('vend-city').value.trim();
       const buffer = parseInt(document.getElementById('vend-buffer').value) || 7;
+      const notes = document.getElementById('vend-notes').value.trim();
 
       const newV = {
         id: `VEND-0${appState.vendors.length + 1}`,
@@ -1436,7 +1452,8 @@
         phone: phone,
         city: city || 'Rajasthan',
         deliveryBufferDays: buffer,
-        rating: 4.8
+        rating: 4.8,
+        notes: notes || ''
       };
 
       appState.vendors.push(newV);
