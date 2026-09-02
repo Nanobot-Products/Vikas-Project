@@ -88,7 +88,7 @@
             <div class="flex items-center gap-2">
               <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white">Dashboard</h1>
               <span class="px-2 py-0.5 text-[11px] font-extrabold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                v2.6 Streamlined Suite
+                v2.7 Item Deletion Enabled
               </span>
             </div>
             <p class="text-xs text-slate-400">Vikas Jeerawala • Procurement, Vendor & Distribution Suite</p>
@@ -914,6 +914,25 @@
       return hash;
     }
 
+    
+    function deleteItem(skuId) {
+      const item = appState.inventory.find(i => i.id === skuId);
+      if (!item) return;
+
+      const confirmDelete = confirm(`Are you sure you want to delete "${item.name}" from your inventory and orders?`);
+      if (!confirmDelete) return;
+
+      // Remove from inventory
+      appState.inventory = appState.inventory.filter(i => i.id !== skuId);
+      // Remove related QC and quotations
+      appState.qcInspections = (appState.qcInspections || []).filter(q => q.skuId !== skuId);
+      appState.quotations = (appState.quotations || []).filter(q => q.skuId !== skuId);
+
+      saveState();
+      showToast(`Deleted "${item.name}" from inventory`);
+      renderAll();
+    }
+
     function saveState() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
     }
@@ -1049,7 +1068,8 @@
               </td>
               <td class="p-3 text-center font-bold text-amber-400">${disp}</td>
               <td class="p-3 text-center font-extrabold ${ready > 0 ? 'text-emerald-400' : 'text-slate-500'}">${ready}</td>
-              <td class="p-3 text-right">
+              <td class="p-3 text-right flex items-center justify-end gap-1.5">
+                <button onclick="deleteItem('${item.id}')" title="Delete Item" class="p-1.5 rounded-lg hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 transition-all"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
                 ${isPending 
                   ? `<button onclick="startQCInspectionForItem('${item.id}')" class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-bold text-[11px] transition-all">
                        Receive & Inspect
@@ -1100,7 +1120,8 @@
                 : '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">✅ Received & QC Passed</span>'
               }
             </td>
-            <td class="p-3 text-right">
+            <td class="p-3 text-right flex items-center justify-end gap-1.5">
+              <button onclick="deleteItem('${item.id}')" title="Delete Order" class="p-1.5 rounded-lg hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 transition-all"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
               ${isPending 
                 ? `<button onclick="startQCInspectionForItem('${item.id}')" class="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs flex items-center gap-1 shadow-sm">
                      <i data-lucide="check-square" class="w-3.5 h-3.5"></i> Receive Shipment
@@ -1161,7 +1182,14 @@
           <div class="bg-slate-850 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-4 hover:border-indigo-500/50 transition-all">
             <div>
               <div class="flex items-center justify-between mb-2">
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-300">${item.category}</span>
+                <div class="flex items-center gap-1.5">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-300">${item.category}</span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <button onclick="deleteItem('${item.id}')" title="Delete Item" class="p-1 rounded-lg hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-all">
+                      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
                 <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isPending ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : ready > 5 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">
                   ${isPending ? '🚚 In-Transit (Ordered)' : `${ready} Units Ready`}
                 </span>
