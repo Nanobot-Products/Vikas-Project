@@ -75,71 +75,76 @@
   <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <!-- Top Header Bar -->
-  <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16 gap-3">
+    <!-- Top Header Bar (100% Mobile-Friendly & Responsive) -->
+  <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 shadow-sm">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      
+      <!-- Top Row: Logo, Title & Action Buttons -->
+      <div class="flex items-center justify-between py-2.5 sm:py-3 gap-2">
         
         <!-- Logo & Title -->
-        <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('overview')">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-emerald-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
-            <i data-lucide="gift" class="w-5 h-5"></i>
+        <div class="flex items-center gap-2 sm:gap-3 cursor-pointer min-w-0" onclick="switchTab('overview')">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-emerald-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 flex-shrink-0">
+            <i data-lucide="gift" class="w-4 h-4 sm:w-5 sm:h-5"></i>
           </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white">Dashboard</h1>
-              <span class="px-2 py-0.5 text-[11px] font-extrabold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                v3.2 Supplier Edit & Delete Suite
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <h1 class="font-extrabold text-sm sm:text-lg tracking-tight text-white truncate">Dashboard</h1>
+              <span class="px-1.5 py-0.5 text-[10px] font-extrabold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 whitespace-nowrap">
+                v3.3 Mobile
               </span>
             </div>
-            <p class="text-xs text-slate-400">Vikas Jeerawala • Procurement, Vendor & Distribution Suite</p>
+            <p class="text-[11px] text-slate-400 hidden sm:block truncate">Vikas Jeerawala • Procurement & Vendor Suite</p>
           </div>
         </div>
 
-        <!-- Quick Top Action Buttons -->
-        <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Action Buttons (Responsive on Mobile) -->
+        <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
           <button 
             onclick="openQuickDispatchModal()" 
-            class="px-3.5 py-2 text-xs font-bold rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 flex items-center gap-1.5 shadow-md shadow-emerald-500/20 active:scale-95 transition-all">
-            <i data-lucide="send" class="w-4 h-4"></i>
-            <span>Give Item to Guest</span>
+            class="px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-xs font-bold rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 flex items-center gap-1 sm:gap-1.5 shadow-sm active:scale-95 transition-all">
+            <i data-lucide="send" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+            <span class="hidden xs:inline sm:inline">Give Item</span>
+            <span class="inline xs:hidden sm:hidden">Give</span>
           </button>
           
           <button 
             onclick="openItemModal()" 
-            class="px-3.5 py-2 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1.5 shadow-md shadow-indigo-600/20 active:scale-95 transition-all">
-            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-            <span>Place Order / Add Item</span>
+            class="px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1 sm:gap-1.5 shadow-sm active:scale-95 transition-all">
+            <i data-lucide="plus-circle" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+            <span class="hidden xs:inline sm:inline">+ Add Order</span>
+            <span class="inline xs:hidden sm:hidden">+ Order</span>
           </button>
         </div>
 
       </div>
 
-      <!-- Main Navigation Menu (6 Tabs) -->
-      <nav class="flex space-x-1 overflow-x-auto py-2.5 custom-scroll text-xs font-semibold border-t border-slate-800/80">
-        <button onclick="switchTab('overview')" id="nav-overview" class="nav-tab active-nav px-3.5 py-2 rounded-xl flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap transition-all">
-          <i data-lucide="layout-grid" class="w-4 h-4"></i> 1. Overview
+      <!-- Navigation Tabs (Touch-Friendly Horizontal Scroll) -->
+      <nav class="flex space-x-1.5 overflow-x-auto py-2 custom-scroll text-xs font-semibold border-t border-slate-800/80 -mx-3 px-3 sm:mx-0 sm:px-0 scrollbar-none">
+        <button onclick="switchTab('overview')" id="nav-overview" class="nav-tab active-nav px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap flex-shrink-0 transition-all text-xs">
+          <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i> 1. Overview
         </button>
-        <button onclick="switchTab('orders')" id="nav-orders" class="nav-tab px-3.5 py-2 rounded-xl flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap transition-all">
-          <i data-lucide="truck" class="w-4 h-4 text-amber-400"></i> 2. Orders & In-Transit <span id="nav-pending-badge" class="px-1.5 py-0.2 rounded-full bg-amber-500/30 text-amber-300 font-bold text-[10px]">0</span>
+        <button onclick="switchTab('orders')" id="nav-orders" class="nav-tab px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap flex-shrink-0 transition-all text-xs">
+          <i data-lucide="truck" class="w-3.5 h-3.5 text-amber-400"></i> 2. Orders <span id="nav-pending-badge" class="px-1.5 py-0.2 rounded-full bg-amber-500/30 text-amber-300 font-bold text-[10px]">0</span>
         </button>
-        <button onclick="switchTab('items')" id="nav-items" class="nav-tab px-3.5 py-2 rounded-xl flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap transition-all">
-          <i data-lucide="package" class="w-4 h-4"></i> 3. Gifts & Merch Items
+        <button onclick="switchTab('items')" id="nav-items" class="nav-tab px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap flex-shrink-0 transition-all text-xs">
+          <i data-lucide="package" class="w-3.5 h-3.5"></i> 3. Gifts & Merch
         </button>
-        <button onclick="switchTab('distribution')" id="nav-distribution" class="nav-tab px-3.5 py-2 rounded-xl flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap transition-all">
-          <i data-lucide="gift" class="w-4 h-4"></i> 4. Handover to Guests (Live)
+        <button onclick="switchTab('distribution')" id="nav-distribution" class="nav-tab px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap flex-shrink-0 transition-all text-xs">
+          <i data-lucide="gift" class="w-3.5 h-3.5"></i> 4. Handover Desk
         </button>
-        <button onclick="switchTab('qc')" id="nav-qc" class="nav-tab px-3.5 py-2 rounded-xl flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap transition-all">
-          <i data-lucide="check-circle-2" class="w-4 h-4"></i> 5. Receive & Quality Check
+        <button onclick="switchTab('qc')" id="nav-qc" class="nav-tab px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap flex-shrink-0 transition-all text-xs">
+          <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> 5. Quality Check
         </button>
-        <button onclick="switchTab('vendors')" id="nav-vendors" class="nav-tab px-3.5 py-2 rounded-xl flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap transition-all">
-          <i data-lucide="store" class="w-4 h-4"></i> 6. Suppliers Directory
+        <button onclick="switchTab('vendors')" id="nav-vendors" class="nav-tab px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap flex-shrink-0 transition-all text-xs">
+          <i data-lucide="store" class="w-3.5 h-3.5"></i> 6. Suppliers
         </button>
       </nav>
     </div>
   </header>
 
   <!-- Main Content Area -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
 
     <!-- ========================================================================= -->
     <!-- TAB 1: OVERVIEW -->
@@ -147,7 +152,7 @@
     <div id="tab-overview" class="tab-section space-y-6">
       
       <!-- Top Overview Metrics (4 Cards) -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <!-- Card 1: Total Ordered -->
         <div class="bg-slate-850 p-5 rounded-2xl border border-slate-800 space-y-2">
           <div class="flex items-center justify-between text-slate-400 text-xs font-semibold">
@@ -155,7 +160,7 @@
             <i data-lucide="shopping-cart" class="w-4 h-4 text-indigo-400"></i>
           </div>
           <div class="flex items-baseline gap-2">
-            <span id="stat-total-stock" class="text-3xl font-extrabold text-white">0</span>
+            <span id="stat-total-stock" class="text-xl sm:text-3xl font-extrabold text-white">0</span>
             <span class="text-xs text-slate-400">Units</span>
           </div>
           <p class="text-xs text-slate-400">Across <strong class="text-indigo-300" id="stat-sku-count">0 SKUs</strong></p>
@@ -168,7 +173,7 @@
             <i data-lucide="truck" class="w-4 h-4 text-amber-400"></i>
           </div>
           <div class="flex items-baseline gap-2">
-            <span id="stat-pending-delivery" class="text-3xl font-extrabold text-amber-400">0</span>
+            <span id="stat-pending-delivery" class="text-xl sm:text-3xl font-extrabold text-amber-400">0</span>
             <span class="text-xs text-slate-400">Units awaiting arrival</span>
           </div>
           <p class="text-xs text-amber-400 font-semibold flex items-center gap-1">
@@ -183,7 +188,7 @@
             <i data-lucide="package-check" class="w-4 h-4 text-emerald-400"></i>
           </div>
           <div class="flex items-baseline gap-2">
-            <span id="stat-available" class="text-3xl font-extrabold text-emerald-400">0</span>
+            <span id="stat-available" class="text-xl sm:text-3xl font-extrabold text-emerald-400">0</span>
             <span class="text-xs text-slate-400">/ <span id="stat-dispatched">0</span> handed out</span>
           </div>
           <p class="text-xs text-emerald-400 font-semibold flex items-center gap-1">
@@ -198,7 +203,7 @@
             <i data-lucide="indian-rupee" class="w-4 h-4 text-emerald-400"></i>
           </div>
           <div class="flex items-baseline gap-2">
-            <span id="stat-total-cost" class="text-3xl font-extrabold text-emerald-400">₹0</span>
+            <span id="stat-total-cost" class="text-xl sm:text-3xl font-extrabold text-emerald-400">₹0</span>
           </div>
           <p class="text-xs text-slate-400 font-semibold">
             Negotiated Savings: <strong class="text-emerald-400" id="stat-savings">₹0</strong>
@@ -567,7 +572,7 @@
               <span class="text-[11px] text-slate-400 ml-1">Sum: <strong class="text-emerald-400" id="sizes-total-badge">0</strong></span>
             </div>
           </div>
-          <div class="grid grid-cols-6 gap-2 text-center text-xs">
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center text-xs">
             <div>
               <span class="block text-[11px] font-bold text-slate-400 mb-1">XS</span>
               <input type="text" id="form-size-xs" placeholder="0" onfocus="this.select()" oninput="handleSizeInputChanged()" class="w-full p-2 text-center rounded-lg bg-slate-800 border border-slate-700 text-white font-bold" />
