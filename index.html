@@ -104,7 +104,7 @@
 
       </div>
 
-      <!-- Main Navigation Menu (Clean & Simple) -->
+      <!-- Main Navigation Menu -->
       <nav class="flex space-x-1 overflow-x-auto py-2.5 custom-scroll text-xs font-semibold border-t border-slate-800/80">
         <button onclick="switchTab('overview')" id="nav-overview" class="nav-tab active-nav px-3.5 py-2 rounded-xl flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap transition-all">
           <i data-lucide="layout-grid" class="w-4 h-4"></i> 1. Overview
@@ -148,7 +148,7 @@
             </span>
             <h2 class="text-xl sm:text-2xl font-extrabold text-white mt-2">How This App Works (3 Easy Steps)</h2>
             <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl">
-              Everything is connected. When you receive items, check quality, or hand them to guests, your stock numbers and meeting summaries update automatically!
+              Everything is connected. When you order, receive delivery, inspect quality, or hand items to guests, your stock numbers and meeting summaries update automatically!
             </p>
           </div>
           <button onclick="openQuickDispatchModal()" class="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-95 transition-all w-fit">
@@ -163,7 +163,7 @@
               <span class="w-5 h-5 rounded-full bg-indigo-500/20 flex items-center justify-center text-[11px]">1</span>
               See Gifts & Merch
             </div>
-            <p class="text-slate-400">Check total items, sizes (S/M/L/XL), and current stock available.</p>
+            <p class="text-slate-400">Check ordered items, sizes (S/M/L/XL), and stock ready in warehouse.</p>
           </div>
 
           <div onclick="switchTab('qc')" class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-emerald-500 cursor-pointer transition-all space-y-1">
@@ -171,7 +171,7 @@
               <span class="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center text-[11px]">2</span>
               Receive & Check Stock
             </div>
-            <p class="text-slate-400">When delivery arrives from vendor, count items & pass inspection.</p>
+            <p class="text-slate-400">When shipment arrives from vendor, inspect count & quality to add to stock.</p>
           </div>
 
           <div onclick="switchTab('distribution')" class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-amber-500 cursor-pointer transition-all space-y-1">
@@ -189,15 +189,15 @@
         <!-- Card 1 -->
         <div class="bg-slate-850 p-5 rounded-2xl border border-slate-800 space-y-2">
           <div class="flex items-center justify-between text-slate-400 text-xs font-semibold">
-            <span>TOTAL ITEMS IN WAREHOUSE</span>
+            <span>TOTAL ITEMS ORDERED</span>
             <i data-lucide="package" class="w-4 h-4 text-indigo-400"></i>
           </div>
           <div class="flex items-baseline gap-2">
-            <span id="stat-total-stock" class="text-3xl font-extrabold text-white">1,370</span>
+            <span id="stat-total-stock" class="text-3xl font-extrabold text-white">0</span>
             <span class="text-xs text-slate-400">Total Units</span>
           </div>
           <p class="text-xs text-emerald-400 flex items-center gap-1 font-semibold">
-            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> <span id="stat-qc-pass">98.6%</span> Passed Quality Check
+            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> <span id="stat-qc-pass">0%</span> Passed Quality Check
           </p>
         </div>
 
@@ -208,11 +208,11 @@
             <i data-lucide="gift" class="w-4 h-4 text-amber-400"></i>
           </div>
           <div class="flex items-baseline gap-2">
-            <span id="stat-dispatched" class="text-3xl font-extrabold text-amber-400">522</span>
-            <span class="text-xs text-slate-400">/ <span id="stat-available">848</span> left</span>
+            <span id="stat-dispatched" class="text-3xl font-extrabold text-amber-400">0</span>
+            <span class="text-xs text-slate-400">/ <span id="stat-available">0</span> ready</span>
           </div>
           <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-            <div id="stat-dispatch-progress" class="bg-amber-400 h-full rounded-full transition-all" style="width: 38%"></div>
+            <div id="stat-dispatch-progress" class="bg-amber-400 h-full rounded-full transition-all" style="width: 0%"></div>
           </div>
         </div>
 
@@ -223,15 +223,15 @@
             <i data-lucide="indian-rupee" class="w-4 h-4 text-emerald-400"></i>
           </div>
           <div class="flex items-baseline gap-2">
-            <span id="stat-total-cost" class="text-3xl font-extrabold text-emerald-400">₹5,96,050</span>
+            <span id="stat-total-cost" class="text-3xl font-extrabold text-emerald-400">₹0</span>
           </div>
           <p class="text-xs text-slate-400 font-semibold">
-            Negotiated Savings: <strong class="text-emerald-400" id="stat-savings">₹1,12,700</strong>
+            Negotiated Savings: <strong class="text-emerald-400" id="stat-savings">₹0</strong>
           </p>
         </div>
       </div>
 
-      <!-- Quick Inventory Table (Simplified) -->
+      <!-- Quick Inventory Table -->
       <div class="bg-slate-850 p-5 rounded-2xl border border-slate-800 space-y-4">
         <div class="flex items-center justify-between">
           <div>
@@ -252,9 +252,10 @@
                 <th class="p-3">Item Name</th>
                 <th class="p-3">Category</th>
                 <th class="p-3 text-center">Ordered</th>
+                <th class="p-3 text-center">QC Status / Passed</th>
                 <th class="p-3 text-center">Handed Out</th>
                 <th class="p-3 text-center">Ready in Stock</th>
-                <th class="p-3 text-right">Quick Action</th>
+                <th class="p-3 text-right">Action</th>
               </tr>
             </thead>
             <tbody id="overview-table-body" class="divide-y divide-slate-800 text-slate-200">
@@ -426,18 +427,21 @@
           <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
             Deliverable GM-07
           </span>
-          <h2 class="text-lg font-extrabold text-white mt-2">Receive Delivery & Quality Inspection</h2>
-          <p class="text-xs text-slate-400 mt-0.5">When vendor delivers items to venue, count them and mark any defects.</p>
+          <h2 class="text-lg font-extrabold text-white mt-2">Receive Delivery & Quality Inspection Station</h2>
+          <p class="text-xs text-slate-400 mt-0.5">When vendor delivers items to venue, count them and mark any defects to add passed units to stock.</p>
         </div>
         <button onclick="openQCModal()" class="px-4 py-2.5 text-xs font-bold rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 flex items-center gap-2 shadow-sm">
-          <i data-lucide="check-square" class="w-4 h-4"></i> Record New Delivery Inspection
+          <i data-lucide="check-square" class="w-4 h-4"></i> Record Delivery & QC Check
         </button>
       </div>
+
+      <!-- Pending Inspection Warning Cards (if any) -->
+      <div id="qc-pending-banner"></div>
 
       <!-- QC Logs Table -->
       <div class="bg-slate-850 p-5 rounded-2xl border border-slate-800 space-y-3">
         <h3 class="text-sm font-bold text-white flex items-center gap-2">
-          <i data-lucide="clipboard-list" class="w-4 h-4 text-emerald-400"></i> Inspection Records
+          <i data-lucide="clipboard-list" class="w-4 h-4 text-emerald-400"></i> Inspection History Log
         </h3>
         <div class="overflow-x-auto custom-scroll">
           <table class="w-full text-left text-xs">
@@ -489,6 +493,32 @@
         <!-- Rendered Dynamically -->
       </div>
 
+      <!-- Active Quotations Table -->
+      <div class="bg-slate-850 p-5 rounded-2xl border border-slate-800 space-y-3">
+        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+          <i data-lucide="scale" class="w-4 h-4 text-indigo-400"></i> Active Quotation Comparison Sheet
+        </h3>
+        <div class="overflow-x-auto custom-scroll">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-900 text-slate-400 font-semibold border-b border-slate-800">
+              <tr>
+                <th class="p-3">SKU Item</th>
+                <th class="p-3">Vendor</th>
+                <th class="p-3 text-right">Quoted Rate</th>
+                <th class="p-3 text-right">GST %</th>
+                <th class="p-3 text-right">Total Amount</th>
+                <th class="p-3 text-center">Lead Time</th>
+                <th class="p-3 text-center">Safety Buffer</th>
+                <th class="p-3 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody id="quotes-history-body" class="divide-y divide-slate-800 text-slate-200">
+              <!-- Rendered Dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
 
     <!-- ========================================================================= -->
@@ -508,7 +538,7 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- TAB 7: 1-CLICK MEETING SUMMARY -->
+    <!-- TAB 7: 1-CLICK MEETING SUMMARY (100% DYNAMIC & CONNECTED) -->
     <!-- ========================================================================= -->
     <div id="tab-meeting" class="tab-section hidden space-y-6">
       
@@ -528,39 +558,44 @@
 
       <!-- Printable Document -->
       <div class="bg-slate-850 p-6 sm:p-8 rounded-2xl border border-slate-800 text-slate-200 space-y-6">
-        <div class="border-b border-slate-700 pb-4">
-          <span class="text-xs font-bold text-indigo-400 uppercase">TiE Yugaantar '26 Executive Briefing</span>
-          <h2 class="text-xl font-extrabold text-white mt-1">Gifts, Awards & Merchandise Position</h2>
-          <p class="text-xs text-slate-400 mt-1">Compiled by: <strong class="text-white">Vikas Jeerawala</strong> (Procurement & Vendor Lead)</p>
+        <div class="border-b border-slate-700 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">TiE Yugaantar '26 Executive Briefing</span>
+            <h2 class="text-xl font-extrabold text-white mt-1">Gifts, Awards & Merchandise Position</h2>
+            <p class="text-xs text-slate-400 mt-1">Compiled by: <strong class="text-white">Vikas Jeerawala</strong> (Procurement & Vendor Lead)</p>
+          </div>
+          <div class="text-xs text-slate-400 bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-800">
+            Live Sync: <span class="text-emerald-400 font-bold" id="briefing-sku-count">0 items tracked</span>
+          </div>
         </div>
 
         <!-- Section 1 -->
         <div class="space-y-2 text-xs">
-          <h3 class="font-bold text-emerald-400 uppercase tracking-wider">1. Financial & Inventory Summary</h3>
+          <h3 class="font-bold text-emerald-400 uppercase tracking-wider">1. Financial & Inventory Summary (Live Real-Time)</h3>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
-              <span class="text-slate-400">Total Items:</span>
-              <div class="text-lg font-bold text-white mt-1">1,370 units</div>
+              <span class="text-slate-400">Total Items Ordered:</span>
+              <div id="briefing-total-units" class="text-lg font-bold text-white mt-1">0 units</div>
             </div>
             <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
               <span class="text-slate-400">Handed Out:</span>
-              <div class="text-lg font-bold text-amber-400 mt-1">522 units (38%)</div>
+              <div id="briefing-disp-units" class="text-lg font-bold text-amber-400 mt-1">0 units</div>
             </div>
             <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
               <span class="text-slate-400">Total Budget:</span>
-              <div class="text-lg font-bold text-emerald-400 mt-1">₹5,96,050</div>
+              <div id="briefing-cost-val" class="text-lg font-bold text-emerald-400 mt-1">₹0</div>
             </div>
             <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
               <span class="text-slate-400">Savings Achieved:</span>
-              <div class="text-lg font-bold text-indigo-400 mt-1">₹1,12,700</div>
+              <div id="briefing-sav-val" class="text-lg font-bold text-indigo-400 mt-1">₹0</div>
             </div>
           </div>
         </div>
 
         <!-- Section 2 -->
         <div class="space-y-2 text-xs">
-          <h3 class="font-bold text-rose-400 uppercase tracking-wider">2. Decisions Needed from Ashish Jain / Leads</h3>
-          <ul class="list-disc list-inside space-y-1.5 p-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-300">
+          <h3 class="font-bold text-rose-400 uppercase tracking-wider">2. Key Decisions Needed from Ashish Jain / Leads</h3>
+          <ul class="list-disc list-inside space-y-1.5 p-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-300" id="briefing-decisions-list">
             <li>Confirm sample sign-off for Jodhpur Handcrafted Brass Box (Marwar Crafts ₹1,650).</li>
             <li>Verify presentation sequence for 15 Category Trophies & 45 Certificates.</li>
             <li>Receive finalized vector artwork lockup from Nitesh Mathur for apparel.</li>
@@ -570,8 +605,8 @@
         <!-- Section 3 -->
         <div class="space-y-2 text-xs">
           <h3 class="font-bold text-amber-400 uppercase tracking-wider">3. Quality & Delivery Buffers</h3>
-          <p class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-300">
-            All selected suppliers provide a safety buffer of 7–10 days before event dates. Current warehouse inspection pass rate is 98.6%. Defective items have been replaced by suppliers.
+          <p id="briefing-qc-note" class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-300">
+            All selected suppliers provide a safety buffer of 7–10 days before event dates.
           </p>
         </div>
       </div>
@@ -581,26 +616,28 @@
   </main>
 
   <!-- ========================================================================= -->
-  <!-- SIMPLE MODALS -->
+  <!-- MODALS -->
   <!-- ========================================================================= -->
 
   <!-- Modal 1: Add New Item -->
   <div id="modal-item" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="bg-slate-850 rounded-2xl max-w-md w-full p-6 border border-slate-700 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scroll">
+    <div class="bg-slate-850 rounded-2xl max-w-lg w-full p-6 border border-slate-700 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scroll">
       <div class="flex items-center justify-between border-b border-slate-700 pb-3">
         <h3 id="modal-item-title" class="text-sm font-bold text-white">Add New Item</h3>
         <button onclick="closeItemModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <form onsubmit="handleSaveItem(event)" class="space-y-3 text-xs">
+      <form onsubmit="handleSaveItem(event)" class="space-y-3.5 text-xs">
         <input type="hidden" id="form-item-id" />
+        
         <div>
           <label class="block font-semibold text-slate-300 mb-1">Item Name *</label>
-          <input type="text" id="form-item-name" required placeholder="e.g. TiE Polo T-Shirt" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+          <input type="text" id="form-item-name" required placeholder="e.g. TiE Yugaantar Polo T-Shirt" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500" />
         </div>
+
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Category *</label>
-            <select id="form-item-cat" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white">
+            <select id="form-item-cat" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500">
               <option value="VIP Gifts">VIP Gifts</option>
               <option value="Merchandise">Merchandise (T-Shirts/Bags)</option>
               <option value="Awards & Prizes">Awards & Prizes</option>
@@ -609,19 +646,46 @@
           </div>
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Total Ordered Qty *</label>
-            <input type="number" id="form-item-qty" required min="1" placeholder="100" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+            <input type="number" id="form-item-qty" required min="1" placeholder="200" oninput="handleOrderedQtyInput(this.value)" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500" />
           </div>
         </div>
+
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Unit Price (₹) *</label>
-            <input type="number" id="form-item-cost" required min="0" placeholder="540" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+            <input type="number" id="form-item-cost" required min="0" placeholder="120" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500" />
           </div>
           <div>
-            <label class="block font-semibold text-slate-300 mb-1">Storage Location</label>
-            <input type="text" id="form-item-loc" placeholder="e.g. Rack A1" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+            <label class="block font-semibold text-slate-300 mb-1">Storage Room / Rack</label>
+            <input type="text" id="form-item-loc" placeholder="e.g. Backstage Storage - Box 2" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500" />
           </div>
         </div>
+
+        <!-- QC Delivery Status -->
+        <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-750 space-y-3">
+          <div>
+            <label class="block font-bold text-indigo-300 mb-1">Delivery & Quality Check Status:</label>
+            <select id="form-item-status" onchange="toggleQCInputs(this.value)" class="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white font-semibold focus:ring-2 focus:ring-indigo-500">
+              <option value="pending">⏳ Order Placed (Pending Delivery & QC Check)</option>
+              <option value="received">✅ Already Delivered & QC Checked</option>
+            </select>
+            <p id="qc-status-hint" class="text-[11px] text-slate-400 mt-1">
+              Item will be marked as "Awaiting Delivery". You can inspect it when the delivery arrives.
+            </p>
+          </div>
+
+          <div id="form-qc-expanded" class="hidden grid grid-cols-2 gap-3 pt-2 border-t border-slate-800">
+            <div>
+              <label class="block font-semibold text-emerald-400 mb-1">QC Passed Count *</label>
+              <input type="number" id="form-item-passed" min="0" placeholder="195" oninput="calculateDefectsFromPassed()" class="w-full p-2 rounded-lg bg-slate-800 border border-slate-700 text-white font-bold" />
+            </div>
+            <div>
+              <label class="block font-semibold text-rose-400 mb-1">Defects Count</label>
+              <input type="number" id="form-item-defects" min="0" value="0" oninput="calculatePassedFromDefects()" class="w-full p-2 rounded-lg bg-slate-800 border border-slate-700 text-white font-bold" />
+            </div>
+          </div>
+        </div>
+
         <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-700">
           <button type="button" onclick="closeItemModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold">Cancel</button>
           <button type="submit" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold">Save Item</button>
@@ -630,35 +694,135 @@
     </div>
   </div>
 
-  <!-- Modal 2: QC Inspection -->
+  <!-- Modal 2: QC Inspection Modal -->
   <div id="modal-qc" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-slate-850 rounded-2xl max-w-md w-full p-6 border border-slate-700 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-        <h3 class="text-sm font-bold text-white">Record Delivery Inspection</h3>
+        <h3 class="text-sm font-bold text-white">Record Delivery & QC Inspection</h3>
         <button onclick="closeQCModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <form onsubmit="handleSaveQC(event)" class="space-y-3 text-xs">
         <div>
           <label class="block font-semibold text-slate-300 mb-1">Select Delivered Item *</label>
-          <select id="qc-form-sku" required class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white"></select>
+          <select id="qc-form-sku" required onchange="handleQCSKUChange(this.value)" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white"></select>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block font-semibold text-slate-300 mb-1">Count Received *</label>
-            <input type="number" id="qc-form-count" required min="1" placeholder="60" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+            <label class="block font-semibold text-slate-300 mb-1">Total Count Inspected *</label>
+            <input type="number" id="qc-form-count" required min="1" placeholder="200" oninput="calculateQCFields()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
           </div>
           <div>
-            <label class="block font-semibold text-slate-300 mb-1">Defective Items (if any)</label>
-            <input type="number" id="qc-form-defects" min="0" value="0" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+            <label class="block font-semibold text-rose-400 mb-1">Defective Items (if any)</label>
+            <input type="number" id="qc-form-defects" min="0" value="0" oninput="calculateQCFields()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
           </div>
         </div>
+        <div class="p-2.5 rounded-xl bg-slate-900 text-emerald-400 text-xs font-bold flex items-center justify-between">
+          <span>QC Passed (Added to Stock):</span>
+          <span id="qc-form-passed-preview" class="text-sm">0 units</span>
+        </div>
         <div>
-          <label class="block font-semibold text-slate-300 mb-1">Storage Room / Rack</label>
-          <input type="text" id="qc-form-bin" placeholder="e.g. Backstage Cupboard A1" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+          <label class="block font-semibold text-slate-300 mb-1">Storage Room / Rack Location</label>
+          <input type="text" id="qc-form-bin" placeholder="e.g. Backstage Storage - Rack B2" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Defect Reason / Supplier Claim (Optional)</label>
+          <input type="text" id="qc-form-notes" placeholder="e.g. 2 stitching defects, replacement requested" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
         </div>
         <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-700">
           <button type="button" onclick="closeQCModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold">Cancel</button>
-          <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold">Record & Add to Stock</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold">Approve QC & Add to Stock</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 3: Add Supplier (Vendor) Modal -->
+  <div id="modal-vendor" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-slate-850 rounded-2xl max-w-md w-full p-6 border border-slate-700 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+        <h3 class="text-sm font-bold text-white">Add New Supplier / Vendor</h3>
+        <button onclick="closeVendorModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="handleSaveVendor(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Vendor / Company Name *</label>
+          <input type="text" id="vend-name" required placeholder="e.g. Royal Rajasthan Handicrafts" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Contact Person *</label>
+            <input type="text" id="vend-contact" required placeholder="e.g. Rameshwar Gehlot" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Phone / WhatsApp *</label>
+            <input type="text" id="vend-phone" required placeholder="+91 98290 12345" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">City / Location</label>
+            <input type="text" id="vend-city" placeholder="Jodhpur, Rajasthan" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Safety Buffer (Days)</label>
+            <input type="number" id="vend-buffer" min="1" value="7" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+          </div>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-700">
+          <button type="button" onclick="closeVendorModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold">Add Supplier</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 4: Log New Quote Modal -->
+  <div id="modal-quote" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-slate-850 rounded-2xl max-w-md w-full p-6 border border-slate-700 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+        <h3 class="text-sm font-bold text-white">Log Vendor Quotation (GM-05)</h3>
+        <button onclick="closeQuoteModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="handleSaveQuote(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Select Item *</label>
+          <select id="quote-sku-select" required class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white"></select>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Select Supplier *</label>
+          <select id="quote-vendor-select" required class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white"></select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Quoted Rate (₹) *</label>
+            <input type="number" id="quote-rate" required min="1" placeholder="540" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">GST %</label>
+            <input type="number" id="quote-gst" min="0" max="28" value="12" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Lead Time (Days)</label>
+            <input type="number" id="quote-lead" min="1" value="12" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Safety Buffer (Days)</label>
+            <input type="number" id="quote-buffer" min="1" value="8" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
+          </div>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Quotation Status</label>
+          <select id="quote-status" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white">
+            <option value="Selected">Selected / Approved</option>
+            <option value="Under Review">Under Review</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-700">
+          <button type="button" onclick="closeQuoteModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold">Save Quotation</button>
         </div>
       </form>
     </div>
@@ -681,9 +845,13 @@
           appState = await res.json();
           saveState();
         } catch(e) {
-          appState = { inventory: [], deliverables: [], distributions: [], vendors: [], qcInspections: [] };
+          appState = { inventory: [], deliverables: [], distributions: [], vendors: [], quotations: [], qcInspections: [] };
         }
       }
+      if (!appState.quotations) appState.quotations = [];
+      if (!appState.vendors) appState.vendors = [];
+      if (!appState.inventory) appState.inventory = [];
+
       renderAll();
       lucide.createIcons();
     }
@@ -710,6 +878,10 @@
       const btn = document.getElementById(`nav-${tabId}`);
       if (target) target.classList.remove('hidden');
       if (btn) btn.classList.add('active-nav');
+
+      if (tabId === 'meeting') {
+        renderBriefing();
+      }
       lucide.createIcons();
     }
 
@@ -720,6 +892,7 @@
       renderQC();
       renderVendors();
       renderDeliverables();
+      renderBriefing();
       populateDropdowns();
     }
 
@@ -733,7 +906,7 @@
 
       appState.inventory.forEach(i => {
         const ord = i.orderedQty || 0;
-        const pass = i.qcPassedQty || ord;
+        const pass = i.qcPassedQty || 0;
         const disp = i.dispatchedQty || 0;
         const cost = i.unitCost || 0;
         const target = i.targetPrice || cost;
@@ -745,8 +918,8 @@
         if (target > cost) totalSavings += (ord * (target - cost));
       });
 
-      const passRate = totalStock > 0 ? ((totalPassed / totalStock) * 100).toFixed(1) : '100';
-      const available = totalPassed - totalDisp;
+      const passRate = totalStock > 0 ? ((totalPassed / totalStock) * 100).toFixed(1) : '0.0';
+      const available = Math.max(0, totalPassed - totalDisp);
       const dispProgress = totalPassed > 0 ? Math.round((totalDisp / totalPassed) * 100) : 0;
 
       document.getElementById('stat-total-stock').innerText = totalStock.toLocaleString();
@@ -761,18 +934,33 @@
       const tb = document.getElementById('overview-table-body');
       if (tb) {
         tb.innerHTML = appState.inventory.map(item => {
-          const ready = (item.qcPassedQty || item.orderedQty) - (item.dispatchedQty || 0);
+          const pass = item.qcPassedQty || 0;
+          const disp = item.dispatchedQty || 0;
+          const ready = Math.max(0, pass - disp);
+          const isPendingQC = !item.qcPassedQty || item.qcPassedQty === 0;
+
           return `
             <tr class="hover:bg-slate-800/50 transition-colors">
               <td class="p-3 font-bold text-white">${item.name}</td>
               <td class="p-3 text-slate-400"><span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-bold text-indigo-300">${item.category}</span></td>
-              <td class="p-3 text-center font-semibold">${item.orderedQty}</td>
-              <td class="p-3 text-center font-bold text-amber-400">${item.dispatchedQty || 0}</td>
-              <td class="p-3 text-center font-extrabold ${ready <= (item.minStockAlert || 10) ? 'text-rose-400' : 'text-emerald-400'}">${ready}</td>
+              <td class="p-3 text-center font-semibold text-white">${item.orderedQty}</td>
+              <td class="p-3 text-center">
+                ${isPendingQC 
+                  ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">⏳ Pending QC</span>'
+                  : `<span class="font-bold text-emerald-400">${pass} passed</span>`
+                }
+              </td>
+              <td class="p-3 text-center font-bold text-amber-400">${disp}</td>
+              <td class="p-3 text-center font-extrabold ${ready > 0 ? 'text-emerald-400' : 'text-slate-500'}">${ready}</td>
               <td class="p-3 text-right">
-                <button onclick="quickHandoverItem('${item.id}')" class="px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500 hover:text-slate-950 font-bold text-[11px] transition-all">
-                  Give to Guest
-                </button>
+                ${isPendingQC 
+                  ? `<button onclick="startQCInspectionForItem('${item.id}')" class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-bold text-[11px] transition-all">
+                       Inspect QC
+                     </button>`
+                  : `<button onclick="quickHandoverItem('${item.id}')" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500 hover:text-slate-950 font-bold text-[11px] transition-all">
+                       Give to Guest
+                     </button>`
+                }
               </td>
             </tr>
           `;
@@ -803,16 +991,20 @@
       if (activeCategory !== 'all') list = list.filter(i => i.category === activeCategory);
 
       container.innerHTML = list.map(item => {
-        const ready = (item.qcPassedQty || item.orderedQty) - (item.dispatchedQty || 0);
+        const pass = item.qcPassedQty || 0;
+        const disp = item.dispatchedQty || 0;
+        const ready = Math.max(0, pass - disp);
+        const isPendingQC = !item.qcPassedQty || item.qcPassedQty === 0;
+
         let sizesHtml = '';
         if (item.hasSizes && item.sizes) {
           sizesHtml = `
             <div class="mt-3 pt-3 border-t border-slate-750 text-[11px]">
-              <span class="text-slate-400 font-bold block mb-1.5">Sizes Available in Stock:</span>
+              <span class="text-slate-400 font-bold block mb-1.5">Sizes in Stock:</span>
               <div class="flex flex-wrap gap-1.5">
                 ${Object.entries(item.sizes).map(([sz, d]) => `
                   <span class="px-2 py-1 rounded bg-slate-900 border border-slate-700 text-slate-200 font-bold">
-                    ${sz}: <strong class="text-emerald-400">${(d.passed || d.ordered) - (d.dispatched || 0)}</strong>
+                    ${sz}: <strong class="text-emerald-400">${Math.max(0, (d.passed || 0) - (d.dispatched || 0))}</strong>
                   </span>
                 `).join('')}
               </div>
@@ -825,12 +1017,12 @@
             <div>
               <div class="flex items-center justify-between mb-2">
                 <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-300">${item.category}</span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${ready > 5 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">
-                  ${ready} Units Ready
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isPendingQC ? 'bg-amber-500/20 text-amber-300' : ready > 5 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">
+                  ${isPendingQC ? '⏳ Awaiting QC Check' : `${ready} Units Ready`}
                 </span>
               </div>
               <h4 class="text-sm font-extrabold text-white">${item.name}</h4>
-              <p class="text-xs text-slate-400 mt-1">Storage: <strong class="text-slate-200">${item.storageLocation || 'Main Storage'}</strong></p>
+              <p class="text-xs text-slate-400 mt-1">Storage: <strong class="text-slate-200">${item.storageLocation || 'Warehouse'}</strong></p>
             </div>
 
             <div class="grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-slate-900 text-center text-xs">
@@ -840,11 +1032,11 @@
               </div>
               <div>
                 <span class="text-[10px] text-slate-400 block">Passed QC</span>
-                <span class="font-bold text-emerald-400">${item.qcPassedQty || item.orderedQty}</span>
+                <span class="font-bold ${isPendingQC ? 'text-amber-400' : 'text-emerald-400'}">${pass}</span>
               </div>
               <div>
                 <span class="text-[10px] text-slate-400 block">Handed Out</span>
-                <span class="font-bold text-amber-400">${item.dispatchedQty || 0}</span>
+                <span class="font-bold text-amber-400">${disp}</span>
               </div>
             </div>
 
@@ -852,9 +1044,15 @@
 
             <div class="pt-3 border-t border-slate-750 flex items-center justify-between">
               <span class="text-xs font-bold text-white">₹${item.unitCost} <span class="text-[10px] text-slate-400 font-normal">/ unit</span></span>
-              <button onclick="quickHandoverItem('${item.id}')" class="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs flex items-center gap-1 shadow-sm">
-                <i data-lucide="send" class="w-3.5 h-3.5"></i> Give to Guest
-              </button>
+              
+              ${isPendingQC 
+                ? `<button onclick="startQCInspectionForItem('${item.id}')" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs flex items-center gap-1 shadow-sm">
+                     <i data-lucide="check-square" class="w-3.5 h-3.5"></i> Inspect QC
+                   </button>`
+                : `<button onclick="quickHandoverItem('${item.id}')" class="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs flex items-center gap-1 shadow-sm">
+                     <i data-lucide="send" class="w-3.5 h-3.5"></i> Give to Guest
+                   </button>`
+              }
             </div>
           </div>
         `;
@@ -864,7 +1062,6 @@
 
     // 3. LIVE DISTRIBUTION
     function renderDistribution() {
-      // 1. History Table
       const tb = document.getElementById('handover-history-body');
       if (tb) {
         tb.innerHTML = appState.distributions.map(d => `
@@ -881,15 +1078,18 @@
         `).join('');
       }
 
-      // 2. Real-time Widget
       const w = document.getElementById('live-stock-widget');
       if (w) {
         w.innerHTML = appState.inventory.map(i => {
-          const bal = (i.qcPassedQty || i.orderedQty) - (i.dispatchedQty || 0);
+          const pass = i.qcPassedQty || 0;
+          const disp = i.dispatchedQty || 0;
+          const bal = Math.max(0, pass - disp);
           return `
             <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
               <span class="font-medium text-slate-300 truncate pr-2">${i.name}</span>
-              <span class="font-bold text-emerald-400 whitespace-nowrap">${bal} left</span>
+              <span class="font-bold ${bal > 0 ? 'text-emerald-400' : 'text-slate-500'} whitespace-nowrap">
+                ${pass === 0 ? '⏳ Pending QC' : `${bal} left`}
+              </span>
             </div>
           `;
         }).join('');
@@ -907,9 +1107,16 @@
       const item = appState.inventory.find(i => i.id === skuId);
       if (!item) return;
 
-      const remaining = (item.qcPassedQty || item.orderedQty) - (item.dispatchedQty || 0);
+      const pass = item.qcPassedQty || 0;
+      const remaining = Math.max(0, pass - (item.dispatchedQty || 0));
+
+      if (pass === 0) {
+        alert(`This item has not passed QC inspection yet! Please inspect and receive it in Tab 4 first.`);
+        return;
+      }
+
       if (qty > remaining) {
-        alert(`Cannot give ${qty} units. Only ${remaining} available in stock!`);
+        alert(`Cannot give ${qty} units. Only ${remaining} QC-passed units available in stock!`);
         return;
       }
 
@@ -966,6 +1173,39 @@
 
     // 4. QC
     function renderQC() {
+      const pendingItems = appState.inventory.filter(i => !i.qcPassedQty || i.qcPassedQty === 0);
+      const banner = document.getElementById('qc-pending-banner');
+      if (banner) {
+        if (pendingItems.length > 0) {
+          banner.innerHTML = `
+            <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 space-y-2 text-xs">
+              <div class="font-bold text-amber-300 flex items-center gap-2">
+                <i data-lucide="alert-circle" class="w-4 h-4"></i> Items Awaiting Delivery & Quality Inspection (${pendingItems.length})
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 pt-1">
+                ${pendingItems.map(pi => `
+                  <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-750 flex items-center justify-between">
+                    <div>
+                      <span class="font-bold text-white block">${pi.name}</span>
+                      <span class="text-[11px] text-slate-400">${pi.orderedQty} units ordered</span>
+                    </div>
+                    <button onclick="startQCInspectionForItem('${pi.id}')" class="px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-[11px]">
+                      Inspect Now
+                    </button>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        } else {
+          banner.innerHTML = `
+            <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-3 text-emerald-300 text-xs font-semibold flex items-center gap-2">
+              <i data-lucide="check-circle-2" class="w-4 h-4"></i> All ordered items have been delivered and inspected!
+            </div>
+          `;
+        }
+      }
+
       const tb = document.getElementById('qc-history-body');
       if (tb) {
         tb.innerHTML = appState.qcInspections.map(q => `
@@ -982,19 +1222,52 @@
       }
     }
 
+    function startQCInspectionForItem(skuId) {
+      openQCModal();
+      document.getElementById('qc-form-sku').value = skuId;
+      handleQCSKUChange(skuId);
+    }
+
+    function handleQCSKUChange(skuId) {
+      const item = appState.inventory.find(i => i.id === skuId);
+      if (item) {
+        document.getElementById('qc-form-count').value = item.orderedQty || 60;
+        document.getElementById('qc-form-defects').value = 0;
+        document.getElementById('qc-form-bin').value = item.storageLocation || 'Main Warehouse';
+        calculateQCFields();
+      }
+    }
+
+    function calculateQCFields() {
+      const count = parseInt(document.getElementById('qc-form-count').value) || 0;
+      const defects = parseInt(document.getElementById('qc-form-defects').value) || 0;
+      const passed = Math.max(0, count - defects);
+      document.getElementById('qc-form-passed-preview').innerText = `${passed} units`;
+    }
+
     function handleSaveQC(e) {
       e.preventDefault();
       const skuId = document.getElementById('qc-form-sku').value;
       const count = parseInt(document.getElementById('qc-form-count').value) || 0;
       const defects = parseInt(document.getElementById('qc-form-defects').value) || 0;
       const bin = document.getElementById('qc-form-bin').value.trim();
+      const notes = document.getElementById('qc-form-notes').value.trim();
+      const passed = Math.max(0, count - defects);
 
       const item = appState.inventory.find(i => i.id === skuId);
       if (item) {
         item.receivedQty = count;
-        item.qcPassedQty = Math.max(0, count - defects);
+        item.qcPassedQty = passed;
         item.qcFailedQty = defects;
         if (bin) item.storageLocation = bin;
+        
+        if (item.hasSizes && item.sizes) {
+          const totalOrd = item.orderedQty || count;
+          Object.keys(item.sizes).forEach(sz => {
+            const szOrd = item.sizes[sz].ordered || 1;
+            item.sizes[sz].passed = Math.round((szOrd / totalOrd) * passed);
+          });
+        }
       }
 
       appState.qcInspections.unshift({
@@ -1003,20 +1276,22 @@
         skuId: skuId,
         skuName: item ? item.name : 'Item',
         totalInspected: count,
-        passed: Math.max(0, count - defects),
+        passed: passed,
         failed: defects,
         storageBin: bin || 'Main Warehouse',
-        vendorClaimAction: defects > 0 ? 'Logged claim for replacement' : 'All approved'
+        vendorClaimAction: notes || (defects > 0 ? 'Defects logged for vendor replacement' : '100% Passed inspection')
       });
 
       saveState();
       closeQCModal();
-      showToast('Delivery recorded and stock updated!');
+      showToast(`QC passed! ${passed} units of ${item.name} added to stock.`);
+      confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
       renderAll();
     }
 
-    // 5. VENDORS
+    // 5. VENDORS & QUOTES (FULLY WORKING MODALS)
     function renderVendors() {
+      // 1. Vendor Cards Grid
       const g = document.getElementById('vendors-card-grid');
       if (g) {
         g.innerHTML = appState.vendors.map(v => `
@@ -1030,11 +1305,121 @@
             </div>
             <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
               <a href="tel:${v.phone}" class="font-bold text-indigo-400 hover:underline">📞 ${v.phone}</a>
-              <span class="text-slate-400">Buffer: <strong class="text-emerald-400">${v.deliveryBufferDays} days</strong></span>
+              <span class="text-slate-400">Buffer: <strong class="text-emerald-400">${v.deliveryBufferDays || 7} days</strong></span>
             </div>
           </div>
         `).join('');
       }
+
+      // 2. Active Quotes Table
+      const qTb = document.getElementById('quotes-history-body');
+      if (qTb) {
+        if (!appState.quotations || appState.quotations.length === 0) {
+          qTb.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-slate-400">No active quotes logged yet. Click Log New Quote above.</td></tr>`;
+        } else {
+          qTb.innerHTML = appState.quotations.map(q => {
+            const tot = (q.qty || 100) * (q.unitRate || 0) * (1 + (q.gstPercent || 12)/100);
+            return `
+              <tr class="hover:bg-slate-800/50">
+                <td class="p-3 font-bold text-white">${q.skuName}</td>
+                <td class="p-3 text-slate-300">${q.vendorName}</td>
+                <td class="p-3 text-right font-bold text-white">₹${q.unitRate.toLocaleString()}</td>
+                <td class="p-3 text-right text-slate-400">${q.gstPercent}%</td>
+                <td class="p-3 text-right font-bold text-emerald-400">₹${Math.round(tot).toLocaleString()}</td>
+                <td class="p-3 text-center text-slate-300">${q.leadTimeDays || 14}d</td>
+                <td class="p-3 text-center font-bold text-emerald-400">+${q.bufferDays || 8}d</td>
+                <td class="p-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${q.status === 'Selected' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${q.status}</span></td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    function openVendorModal() {
+      document.getElementById('vend-name').value = '';
+      document.getElementById('vend-contact').value = '';
+      document.getElementById('vend-phone').value = '';
+      document.getElementById('vend-city').value = '';
+      document.getElementById('vend-buffer').value = 7;
+      document.getElementById('modal-vendor').classList.remove('hidden');
+      document.getElementById('modal-vendor').classList.add('flex');
+    }
+
+    function closeVendorModal() {
+      document.getElementById('modal-vendor').classList.add('hidden');
+      document.getElementById('modal-vendor').classList.remove('flex');
+    }
+
+    function handleSaveVendor(e) {
+      e.preventDefault();
+      const name = document.getElementById('vend-name').value.trim();
+      const contact = document.getElementById('vend-contact').value.trim();
+      const phone = document.getElementById('vend-phone').value.trim();
+      const city = document.getElementById('vend-city').value.trim();
+      const buffer = parseInt(document.getElementById('vend-buffer').value) || 7;
+
+      const newV = {
+        id: `VEND-0${appState.vendors.length + 1}`,
+        name: name,
+        contactPerson: contact,
+        phone: phone,
+        city: city || 'Rajasthan',
+        deliveryBufferDays: buffer,
+        rating: 4.8
+      };
+
+      appState.vendors.push(newV);
+      saveState();
+      closeVendorModal();
+      showToast(`Supplier ${name} added!`);
+      renderAll();
+    }
+
+    function openQuoteModal() {
+      populateDropdowns();
+      document.getElementById('quote-rate').value = '';
+      document.getElementById('modal-quote').classList.remove('hidden');
+      document.getElementById('modal-quote').classList.add('flex');
+    }
+
+    function closeQuoteModal() {
+      document.getElementById('modal-quote').classList.add('hidden');
+      document.getElementById('modal-quote').classList.remove('flex');
+    }
+
+    function handleSaveQuote(e) {
+      e.preventDefault();
+      const skuId = document.getElementById('quote-sku-select').value;
+      const vendId = document.getElementById('quote-vendor-select').value;
+      const rate = parseFloat(document.getElementById('quote-rate').value) || 0;
+      const gst = parseFloat(document.getElementById('quote-gst').value) || 12;
+      const lead = parseInt(document.getElementById('quote-lead').value) || 12;
+      const buffer = parseInt(document.getElementById('quote-buffer').value) || 8;
+      const status = document.getElementById('quote-status').value;
+
+      const sku = appState.inventory.find(i => i.id === skuId);
+      const vend = appState.vendors.find(v => v.id === vendId);
+
+      const newQ = {
+        id: `QUOTE-${Date.now().toString().slice(-4)}`,
+        skuId: skuId,
+        skuName: sku ? sku.name : 'Item',
+        vendorId: vendId,
+        vendorName: vend ? vend.name : 'Supplier',
+        unitRate: rate,
+        gstPercent: gst,
+        qty: sku ? sku.orderedQty : 100,
+        leadTimeDays: lead,
+        bufferDays: buffer,
+        status: status
+      };
+
+      appState.quotations.unshift(newQ);
+      saveState();
+      closeQuoteModal();
+      showToast(`Quotation of ₹${rate} logged for ${newQ.skuName}!`);
+      renderAll();
     }
 
     // 6. DELIVERABLES
@@ -1071,32 +1456,128 @@
       }
     }
 
-    // Helpers & Modals
-    function populateDropdowns() {
-      const dispSel = document.getElementById('handover-item-select');
-      if (dispSel) {
-        dispSel.innerHTML = appState.inventory.map(i => {
-          const bal = (i.qcPassedQty || i.orderedQty) - (i.dispatchedQty || 0);
-          return `<option value="${i.id}">${i.name} (${bal} left)</option>`;
-        }).join('');
-        handleHandoverItemChange();
+    // 7. MEETING BRIEFING (100% REAL-TIME DYNAMIC)
+    function renderBriefing() {
+      let totalUnits = 0;
+      let totalDisp = 0;
+      let totalCost = 0;
+      let totalSavings = 0;
+      let totalPassed = 0;
+
+      appState.inventory.forEach(i => {
+        const ord = i.orderedQty || 0;
+        const pass = i.qcPassedQty || 0;
+        const disp = i.dispatchedQty || 0;
+        const cost = i.unitCost || 0;
+        const target = i.targetPrice || cost;
+
+        totalUnits += ord;
+        totalPassed += pass;
+        totalDisp += disp;
+        totalCost += (ord * cost);
+        if (target > cost) totalSavings += (ord * (target - cost));
+      });
+
+      const passRate = totalUnits > 0 ? ((totalPassed / totalUnits) * 100).toFixed(1) : '100';
+
+      const bUnits = document.getElementById('briefing-total-units');
+      const bDisp = document.getElementById('briefing-disp-units');
+      const bCost = document.getElementById('briefing-cost-val');
+      const bSav = document.getElementById('briefing-sav-val');
+      const bCount = document.getElementById('briefing-sku-count');
+      const bQC = document.getElementById('briefing-qc-note');
+
+      if (bUnits) bUnits.innerText = `${totalUnits.toLocaleString()} units`;
+      if (bDisp) bDisp.innerText = `${totalDisp.toLocaleString()} units (${totalUnits > 0 ? Math.round((totalDisp/totalUnits)*100) : 0}%)`;
+      if (bCost) bCost.innerText = `₹${totalCost.toLocaleString()}`;
+      if (bSav) bSav.innerText = `₹${totalSavings.toLocaleString()}`;
+      if (bCount) bCount.innerText = `${appState.inventory.length} items tracked`;
+      if (bQC) bQC.innerText = `All ${appState.vendors.length} selected suppliers provide a safety buffer of 7–10 days before event dates. Current warehouse inspection pass rate is ${passRate}% (${totalPassed.toLocaleString()} QC-passed units ready).`;
+    }
+
+    function copyMeetingBriefing() {
+      let totalUnits = 0;
+      let totalDisp = 0;
+      let totalCost = 0;
+      let totalSavings = 0;
+      let totalPassed = 0;
+
+      appState.inventory.forEach(i => {
+        totalUnits += (i.orderedQty || 0);
+        totalPassed += (i.qcPassedQty || 0);
+        totalDisp += (i.dispatchedQty || 0);
+        totalCost += ((i.orderedQty || 0) * (i.unitCost || 0));
+        if ((i.targetPrice || i.unitCost) > i.unitCost) {
+          totalSavings += ((i.orderedQty || 0) * ((i.targetPrice || i.unitCost) - i.unitCost));
+        }
+      });
+
+      const passRate = totalUnits > 0 ? ((totalPassed / totalUnits) * 100).toFixed(1) : '100';
+
+      const text = `*TiE Yugaantar '26 | Gifts, Awards & Merchandise Summary*\n\n` +
+        `• Total Items Ordered: ${totalUnits.toLocaleString()} units (${appState.inventory.length} SKUs)\n` +
+        `• QC Pass Rate: ${passRate}% (${totalPassed.toLocaleString()} ready in warehouse)\n` +
+        `• Handed Out to Guests: ${totalDisp.toLocaleString()} units\n` +
+        `• Total Budget: ₹${totalCost.toLocaleString()} (Negotiated Savings: ₹${totalSavings.toLocaleString()})\n\n` +
+        `_Compiled by Vikas Jeerawala (Procurement & Vendor Lead)_`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Summary copied to clipboard for WhatsApp!');
+      });
+    }
+
+    // Modal & Add Item Handling
+    function handleOrderedQtyInput(val) {
+      const q = parseInt(val) || 0;
+      const passInput = document.getElementById('form-item-passed');
+      if (passInput) passInput.value = q;
+      document.getElementById('form-item-defects').value = 0;
+    }
+
+    function toggleQCInputs(status) {
+      const exp = document.getElementById('form-qc-expanded');
+      const hint = document.getElementById('qc-status-hint');
+      if (status === 'received') {
+        exp.classList.remove('hidden');
+        hint.innerText = 'Specify how many units passed inspection and if any defects were found.';
+        const q = parseInt(document.getElementById('form-item-qty').value) || 100;
+        document.getElementById('form-item-passed').value = q;
+        document.getElementById('form-item-defects').value = 0;
+      } else {
+        exp.classList.add('hidden');
+        hint.innerText = 'Item will be marked as "Awaiting Delivery". You can inspect it when the delivery arrives.';
       }
-      const qcSku = document.getElementById('qc-form-sku');
-      if (qcSku) {
-        qcSku.innerHTML = appState.inventory.map(i => `<option value="${i.id}">${i.name}</option>`).join('');
-      }
+    }
+
+    function calculateDefectsFromPassed() {
+      const ord = parseInt(document.getElementById('form-item-qty').value) || 0;
+      const pass = parseInt(document.getElementById('form-item-passed').value) || 0;
+      document.getElementById('form-item-defects').value = Math.max(0, ord - pass);
+    }
+
+    function calculatePassedFromDefects() {
+      const ord = parseInt(document.getElementById('form-item-qty').value) || 0;
+      const defects = parseInt(document.getElementById('form-item-defects').value) || 0;
+      document.getElementById('form-item-passed').value = Math.max(0, ord - defects);
     }
 
     function openItemModal() {
       document.getElementById('form-item-id').value = '';
-      document.getElementById('modal-item-title').innerText = 'Add New Item';
+      document.getElementById('form-item-name').value = '';
+      document.getElementById('form-item-qty').value = '';
+      document.getElementById('form-item-cost').value = '';
+      document.getElementById('form-item-loc').value = '';
+      document.getElementById('form-item-status').value = 'pending';
+      toggleQCInputs('pending');
       document.getElementById('modal-item').classList.remove('hidden');
       document.getElementById('modal-item').classList.add('flex');
     }
+
     function closeItemModal() {
       document.getElementById('modal-item').classList.add('hidden');
       document.getElementById('modal-item').classList.remove('flex');
     }
+
     function handleSaveItem(e) {
       e.preventDefault();
       const name = document.getElementById('form-item-name').value.trim();
@@ -1104,22 +1585,61 @@
       const qty = parseInt(document.getElementById('form-item-qty').value) || 1;
       const cost = parseFloat(document.getElementById('form-item-cost').value) || 0;
       const loc = document.getElementById('form-item-loc').value.trim();
+      const status = document.getElementById('form-item-status').value;
 
-      appState.inventory.push({
+      let passedQty = 0;
+      let failedQty = 0;
+
+      if (status === 'received') {
+        passedQty = parseInt(document.getElementById('form-item-passed').value) || qty;
+        failedQty = parseInt(document.getElementById('form-item-defects').value) || 0;
+      }
+
+      const newItem = {
         id: `SKU-${Date.now().toString().slice(-4)}`,
         name: name,
         category: cat,
         orderedQty: qty,
-        qcPassedQty: qty,
+        receivedQty: status === 'received' ? qty : 0,
+        qcPassedQty: passedQty,
+        qcFailedQty: failedQty,
         dispatchedQty: 0,
         unitCost: cost,
         storageLocation: loc || 'Main Warehouse',
         hasSizes: cat === 'Merchandise'
-      });
+      };
+
+      if (cat === 'Merchandise') {
+        newItem.sizes = {
+          'S': { ordered: Math.round(qty * 0.2), passed: Math.round(passedQty * 0.2), dispatched: 0 },
+          'M': { ordered: Math.round(qty * 0.4), passed: Math.round(passedQty * 0.4), dispatched: 0 },
+          'L': { ordered: Math.round(qty * 0.3), passed: Math.round(passedQty * 0.3), dispatched: 0 },
+          'XL': { ordered: Math.round(qty * 0.1), passed: Math.round(passedQty * 0.1), dispatched: 0 }
+        };
+      }
+
+      appState.inventory.push(newItem);
+
+      if (status === 'received') {
+        appState.qcInspections.unshift({
+          id: `QC-${Date.now().toString().slice(-4)}`,
+          date: new Date().toISOString().split('T')[0],
+          skuId: newItem.id,
+          skuName: name,
+          totalInspected: qty,
+          passed: passedQty,
+          failed: failedQty,
+          storageBin: loc || 'Main Warehouse',
+          vendorClaimAction: failedQty > 0 ? 'Defects recorded' : '100% Passed'
+        });
+      }
 
       saveState();
       closeItemModal();
-      showToast('New item added!');
+      showToast(status === 'received' 
+        ? `Added ${name} (${passedQty} units QC passed)!` 
+        : `Added ${name} (Ordered: ${qty} units - Awaiting delivery & QC)`
+      );
       renderAll();
     }
 
@@ -1137,16 +1657,34 @@
       document.getElementById('guest-name').focus();
     }
 
-    function copyMeetingBriefing() {
-      const text = `*TiE Yugaantar '26 | Gifts, Awards & Merchandise Summary*\n\n` +
-        `• Total Items in Warehouse: 1,370 units\n` +
-        `• Handed Out to Guests: 522 units (38%)\n` +
-        `• Budget Committed: ₹5,96,050 (Savings: ₹1,12,700)\n` +
-        `• Warehouse Inspection Pass Rate: 98.6%\n\n` +
-        `_Compiled by Vikas Jeerawala (Procurement & Vendor Lead)_`;
-      navigator.clipboard.writeText(text).then(() => {
-        showToast('Summary copied to clipboard!');
-      });
+    function populateDropdowns() {
+      const dispSel = document.getElementById('handover-item-select');
+      if (dispSel) {
+        dispSel.innerHTML = appState.inventory.map(i => {
+          const pass = i.qcPassedQty || 0;
+          const bal = Math.max(0, pass - (i.dispatchedQty || 0));
+          return `<option value="${i.id}">${i.name} (${pass === 0 ? 'Pending QC' : `${bal} ready`})</option>`;
+        }).join('');
+        handleHandoverItemChange();
+      }
+
+      const qcSku = document.getElementById('qc-form-sku');
+      if (qcSku) {
+        qcSku.innerHTML = appState.inventory.map(i => `<option value="${i.id}">${i.name} (Ordered: ${i.orderedQty})</option>`).join('');
+        if (appState.inventory.length > 0) {
+          handleQCSKUChange(appState.inventory[0].id);
+        }
+      }
+
+      const qSkuSel = document.getElementById('quote-sku-select');
+      if (qSkuSel) {
+        qSkuSel.innerHTML = appState.inventory.map(i => `<option value="${i.id}">${i.name}</option>`).join('');
+      }
+
+      const qVendSel = document.getElementById('quote-vendor-select');
+      if (qVendSel) {
+        qVendSel.innerHTML = appState.vendors.map(v => `<option value="${v.id}">${v.name}</option>`).join('');
+      }
     }
 
     function exportDistributionCSV() {
