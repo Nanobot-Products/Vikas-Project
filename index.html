@@ -91,7 +91,7 @@
             <div class="flex items-center gap-1.5 flex-wrap">
               <h1 class="font-extrabold text-sm sm:text-lg tracking-tight text-white truncate">Dashboard</h1>
               <span class="px-1.5 py-0.5 text-[10px] font-extrabold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 whitespace-nowrap">
-                v3.3 Mobile
+                v3.4 Custom PO Reference
               </span>
             </div>
             <p class="text-[11px] text-slate-400 hidden sm:block truncate">Vikas Jeerawala • Procurement & Vendor Suite</p>
@@ -539,9 +539,15 @@
       <form onsubmit="handleSaveItem(event)" class="space-y-3.5 text-xs">
         <input type="hidden" id="form-item-id" />
         
-        <div>
-          <label class="block font-semibold text-slate-300 mb-1">Item Name *</label>
-          <input type="text" id="form-item-name" required placeholder="e.g. TiE Yugaantar Polo T-Shirt" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500" />
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block font-semibold text-slate-300 mb-1">Item Name *</label>
+            <input type="text" id="form-item-name" required placeholder="e.g. TiE Yugaantar Polo T-Shirt" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">PO / Order Ref #</label>
+            <input type="text" id="form-item-po" placeholder="e.g. PO-105" onfocus="this.select()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-indigo-300 font-bold focus:ring-2 focus:ring-indigo-500" />
+          </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -1624,6 +1630,8 @@
       populateDropdowns();
       document.getElementById('form-item-id').value = '';
       document.getElementById('form-item-name').value = '';
+      const nextPoNum = `PO-${101 + appState.inventory.length}`;
+      document.getElementById('form-item-po').value = nextPoNum;
       document.getElementById('form-item-qty').value = '';
       document.getElementById('form-item-cost').value = '';
       document.getElementById('form-item-target').value = '';
@@ -1680,7 +1688,7 @@
 
       const newItem = {
         id: `SKU-${Date.now().toString().slice(-4)}`,
-        poNumber: `PO-${Math.floor(100 + Math.random() * 900)}`,
+        poNumber: (document.getElementById('form-item-po')?.value || '').trim() || `PO-${101 + appState.inventory.length}`,
         name: name,
         category: cat,
         supplierName: vendorName,
