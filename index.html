@@ -88,7 +88,7 @@
             <div class="flex items-center gap-2">
               <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white">Dashboard</h1>
               <span class="px-2 py-0.5 text-[11px] font-extrabold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                v3.1 Supplier Notes & Details
+                v3.2 Supplier Edit & Delete Suite
               </span>
             </div>
             <p class="text-xs text-slate-400">Vikas Jeerawala • Procurement, Vendor & Distribution Suite</p>
@@ -706,10 +706,11 @@
   <div id="modal-vendor" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-slate-850 rounded-2xl max-w-md w-full p-6 border border-slate-700 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-        <h3 class="text-sm font-bold text-white">Add New Supplier / Vendor</h3>
+        <h3 id="modal-vendor-title" class="text-sm font-bold text-white">Add New Supplier / Vendor</h3>
         <button onclick="closeVendorModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <form onsubmit="handleSaveVendor(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="vend-id" />
         <div>
           <label class="block font-semibold text-slate-300 mb-1">Vendor / Company Name *</label>
           <input type="text" id="vend-name" required placeholder="e.g. Royal Rajasthan Handicrafts" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white" />
@@ -740,7 +741,7 @@
         </div>
         <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-700">
           <button type="button" onclick="closeVendorModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold">Cancel</button>
-          <button type="submit" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold">Add Supplier</button>
+          <button type="submit" id="btn-save-vendor" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold">Save Supplier</button>
         </div>
       </form>
     </div>
@@ -1363,9 +1364,12 @@
                 <h4 class="text-sm font-extrabold text-white">${v.name}</h4>
                 <p class="text-xs text-slate-400">Contact: <strong class="text-slate-200">${v.contactPerson}</strong> (${v.city || 'Vendor'})</p>
               </div>
-              <div class="flex items-center gap-2">
-                <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-xs font-bold">⭐ ${v.rating || 4.8}</span>
-                <button onclick="deleteSupplier('${v.id}')" title="Delete Supplier" class="p-1 rounded-lg hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 transition-all">
+              <div class="flex items-center gap-1.5">
+                <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-xs font-bold mr-1">⭐ ${v.rating || 4.8}</span>
+                <button onclick="editSupplier('${v.id}')" title="Edit Supplier" class="p-1.5 rounded-lg bg-slate-800 hover:bg-indigo-600 hover:text-white text-slate-300 transition-all">
+                  <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="deleteSupplier('${v.id}')" title="Delete Supplier" class="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 text-slate-400 transition-all">
                   <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                 </button>
               </div>
@@ -1414,6 +1418,9 @@
     }
 
     function openVendorModal() {
+      document.getElementById('vend-id').value = '';
+      document.getElementById('modal-vendor-title').innerText = 'Add New Supplier / Vendor';
+      document.getElementById('btn-save-vendor').innerText = 'Add Supplier';
       document.getElementById('vend-name').value = '';
       document.getElementById('vend-contact').value = '';
       document.getElementById('vend-phone').value = '';
@@ -1421,6 +1428,27 @@
       document.getElementById('vend-buffer').value = '7';
       document.getElementById('vend-notes').value = '';
       
+      const m = document.getElementById('modal-vendor');
+      if (m) {
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+      }
+    }
+
+    function editSupplier(vendId) {
+      const v = appState.vendors.find(x => x.id === vendId);
+      if (!v) return;
+
+      document.getElementById('vend-id').value = v.id;
+      document.getElementById('modal-vendor-title').innerText = `Edit Supplier: ${v.name}`;
+      document.getElementById('btn-save-vendor').innerText = 'Update Supplier';
+      document.getElementById('vend-name').value = v.name || '';
+      document.getElementById('vend-contact').value = v.contactPerson || '';
+      document.getElementById('vend-phone').value = v.phone || '';
+      document.getElementById('vend-city').value = v.city || '';
+      document.getElementById('vend-buffer').value = v.deliveryBufferDays || 7;
+      document.getElementById('vend-notes').value = v.notes || '';
+
       const m = document.getElementById('modal-vendor');
       if (m) {
         m.classList.remove('hidden');
@@ -1438,6 +1466,7 @@
 
     function handleSaveVendor(e) {
       e.preventDefault();
+      const existingId = document.getElementById('vend-id').value;
       const name = document.getElementById('vend-name').value.trim();
       const contact = document.getElementById('vend-contact').value.trim();
       const phone = document.getElementById('vend-phone').value.trim();
@@ -1445,21 +1474,42 @@
       const buffer = parseInt(document.getElementById('vend-buffer').value) || 7;
       const notes = document.getElementById('vend-notes').value.trim();
 
-      const newV = {
-        id: `VEND-0${appState.vendors.length + 1}`,
-        name: name,
-        contactPerson: contact,
-        phone: phone,
-        city: city || 'Rajasthan',
-        deliveryBufferDays: buffer,
-        rating: 4.8,
-        notes: notes || ''
-      };
+      if (existingId) {
+        const v = appState.vendors.find(x => x.id === existingId);
+        if (v) {
+          const oldName = v.name;
+          v.name = name;
+          v.contactPerson = contact;
+          v.phone = phone;
+          v.city = city;
+          v.deliveryBufferDays = buffer;
+          v.notes = notes;
 
-      appState.vendors.push(newV);
+          // Also update supplierName in inventory if renamed
+          if (oldName !== name) {
+            appState.inventory.forEach(i => {
+              if (i.supplierName === oldName) i.supplierName = name;
+            });
+          }
+          showToast(`Updated supplier "${name}" details!`);
+        }
+      } else {
+        const newV = {
+          id: `VEND-0${appState.vendors.length + 1}`,
+          name: name,
+          contactPerson: contact,
+          phone: phone,
+          city: city || 'Rajasthan',
+          deliveryBufferDays: buffer,
+          rating: 4.8,
+          notes: notes || ''
+        };
+        appState.vendors.push(newV);
+        showToast(`Supplier "${name}" added!`);
+      }
+
       saveState();
       closeVendorModal();
-      showToast(`Supplier ${name} added!`);
       renderAll();
     }
 
