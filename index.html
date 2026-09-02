@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vikas's Inventory & Distribution Manager | TiE Yugaantar</title>
+  <title>Vikas's Inventory & Distribution Suite | TiE Yugaantar</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -43,7 +43,7 @@
     .active-nav {
       background-color: #4f46e5 !important;
       color: #ffffff !important;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
     }
     .custom-scroll::-webkit-scrollbar {
       width: 6px;
@@ -77,11 +77,11 @@
           <div>
             <div class="flex items-center gap-2">
               <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white">TiE Yugaantar '26</h1>
-              <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                Gifts & Merch
+              <span class="px-2 py-0.5 text-[11px] font-extrabold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                v2.2 Live Connected
               </span>
             </div>
-            <p class="text-xs text-slate-400">Vikas Jeerawala (Lead) • Simple Inventory & Distribution</p>
+            <p class="text-xs text-slate-400">Vikas Jeerawala • Procurement & Vendor Lead</p>
           </div>
         </div>
 
@@ -96,7 +96,7 @@
           
           <button 
             onclick="openItemModal()" 
-            class="px-3.5 py-2 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1.5 shadow-md shadow-indigo-600/20 active:scale-95 transition-all hidden sm:flex">
+            class="px-3.5 py-2 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1.5 shadow-md shadow-indigo-600/20 active:scale-95 transition-all">
             <i data-lucide="plus-circle" class="w-4 h-4"></i>
             <span>Add New Item</span>
           </button>
@@ -148,7 +148,7 @@
             </span>
             <h2 class="text-xl sm:text-2xl font-extrabold text-white mt-2">How This App Works (3 Easy Steps)</h2>
             <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl">
-              Everything is connected. When you order, receive delivery, inspect quality, or hand items to guests, your stock numbers and meeting summaries update automatically!
+              Everything is connected in real-time. When you order, receive delivery, inspect quality, or hand items to guests, your stock numbers and meeting summaries update automatically!
             </p>
           </div>
           <button onclick="openQuickDispatchModal()" class="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-95 transition-all w-fit">
@@ -479,10 +479,10 @@
           <p class="text-xs text-slate-400 mt-0.5">Vikas's quotation directory, contact numbers, and negotiated prices.</p>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="openVendorModal()" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1.5 shadow-sm">
+          <button onclick="openVendorModal()" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1.5 shadow-sm active:scale-95 transition-all">
             <i data-lucide="user-plus" class="w-4 h-4"></i> Add Supplier
           </button>
-          <button onclick="openQuoteModal()" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 flex items-center gap-1.5 shadow-sm">
+          <button onclick="openQuoteModal()" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 flex items-center gap-1.5 shadow-sm active:scale-95 transition-all">
             <i data-lucide="file-plus" class="w-4 h-4"></i> Log New Quote
           </button>
         </div>
@@ -538,7 +538,7 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- TAB 7: 1-CLICK MEETING SUMMARY (100% DYNAMIC & CONNECTED) -->
+    <!-- TAB 7: 1-CLICK MEETING SUMMARY (100% REAL-TIME DYNAMIC) -->
     <!-- ========================================================================= -->
     <div id="tab-meeting" class="tab-section hidden space-y-6">
       
@@ -571,7 +571,7 @@
 
         <!-- Section 1 -->
         <div class="space-y-2 text-xs">
-          <h3 class="font-bold text-emerald-400 uppercase tracking-wider">1. Financial & Inventory Summary (Live Real-Time)</h3>
+          <h3 class="font-bold text-emerald-400 uppercase tracking-wider">1. Financial & Inventory Summary (Live Dynamic Real-Time)</h3>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
               <span class="text-slate-400">Total Items Ordered:</span>
@@ -736,7 +736,7 @@
     </div>
   </div>
 
-  <!-- Modal 3: Add Supplier (Vendor) Modal -->
+  <!-- Modal 3: Add Supplier Modal -->
   <div id="modal-vendor" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-slate-850 rounded-2xl max-w-md w-full p-6 border border-slate-700 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b border-slate-700 pb-3">
@@ -830,16 +830,28 @@
 
   <!-- JavaScript Logic -->
   <script>
-    const STORAGE_KEY = 'VIKAS_INVENTORY_STORE_v1';
+    const STORAGE_KEY = 'VIKAS_INVENTORY_STORE_v2';
     let appState = null;
     let activeCategory = 'all';
 
     async function initApp() {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        try { appState = JSON.parse(saved); } catch(e) {}
+      // 1. Try to read current version
+      let saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) {
+        // Migration: Check if previous v1 exists and upgrade it
+        const v1 = localStorage.getItem('VIKAS_INVENTORY_STORE_v1');
+        if (v1) {
+          saved = v1;
+        }
       }
-      if (!appState) {
+
+      if (saved) {
+        try { 
+          appState = JSON.parse(saved); 
+        } catch(e) {}
+      }
+
+      if (!appState || !appState.inventory || appState.inventory.length === 0) {
         try {
           const res = await fetch('initial_data.json');
           appState = await res.json();
@@ -848,10 +860,14 @@
           appState = { inventory: [], deliverables: [], distributions: [], vendors: [], quotations: [], qcInspections: [] };
         }
       }
+
       if (!appState.quotations) appState.quotations = [];
       if (!appState.vendors) appState.vendors = [];
       if (!appState.inventory) appState.inventory = [];
+      if (!appState.distributions) appState.distributions = [];
+      if (!appState.qcInspections) appState.qcInspections = [];
 
+      saveState();
       renderAll();
       lucide.createIcons();
     }
@@ -879,9 +895,8 @@
       if (target) target.classList.remove('hidden');
       if (btn) btn.classList.add('active-nav');
 
-      if (tabId === 'meeting') {
-        renderBriefing();
-      }
+      // Always re-calculate on every tab switch
+      renderAll();
       lucide.createIcons();
     }
 
@@ -922,13 +937,21 @@
       const available = Math.max(0, totalPassed - totalDisp);
       const dispProgress = totalPassed > 0 ? Math.round((totalDisp / totalPassed) * 100) : 0;
 
-      document.getElementById('stat-total-stock').innerText = totalStock.toLocaleString();
-      document.getElementById('stat-qc-pass').innerText = `${passRate}%`;
-      document.getElementById('stat-dispatched').innerText = totalDisp.toLocaleString();
-      document.getElementById('stat-available').innerText = available.toLocaleString();
-      document.getElementById('stat-dispatch-progress').style.width = `${dispProgress}%`;
-      document.getElementById('stat-total-cost').innerText = `₹${totalCost.toLocaleString()}`;
-      document.getElementById('stat-savings').innerText = `₹${totalSavings.toLocaleString()}`;
+      const statStock = document.getElementById('stat-total-stock');
+      const statPass = document.getElementById('stat-qc-pass');
+      const statDisp = document.getElementById('stat-dispatched');
+      const statAvail = document.getElementById('stat-available');
+      const statProg = document.getElementById('stat-dispatch-progress');
+      const statCost = document.getElementById('stat-total-cost');
+      const statSav = document.getElementById('stat-savings');
+
+      if (statStock) statStock.innerText = totalStock.toLocaleString();
+      if (statPass) statPass.innerText = `${passRate}%`;
+      if (statDisp) statDisp.innerText = totalDisp.toLocaleString();
+      if (statAvail) statAvail.innerText = available.toLocaleString();
+      if (statProg) statProg.style.width = `${dispProgress}%`;
+      if (statCost) statCost.innerText = `₹${totalCost.toLocaleString()}`;
+      if (statSav) statSav.innerText = `₹${totalSavings.toLocaleString()}`;
 
       // Table
       const tb = document.getElementById('overview-table-body');
@@ -1342,13 +1365,20 @@
       document.getElementById('vend-phone').value = '';
       document.getElementById('vend-city').value = '';
       document.getElementById('vend-buffer').value = 7;
-      document.getElementById('modal-vendor').classList.remove('hidden');
-      document.getElementById('modal-vendor').classList.add('flex');
+      
+      const m = document.getElementById('modal-vendor');
+      if (m) {
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+      }
     }
 
     function closeVendorModal() {
-      document.getElementById('modal-vendor').classList.add('hidden');
-      document.getElementById('modal-vendor').classList.remove('flex');
+      const m = document.getElementById('modal-vendor');
+      if (m) {
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+      }
     }
 
     function handleSaveVendor(e) {
@@ -1379,13 +1409,20 @@
     function openQuoteModal() {
       populateDropdowns();
       document.getElementById('quote-rate').value = '';
-      document.getElementById('modal-quote').classList.remove('hidden');
-      document.getElementById('modal-quote').classList.add('flex');
+      
+      const m = document.getElementById('modal-quote');
+      if (m) {
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+      }
     }
 
     function closeQuoteModal() {
-      document.getElementById('modal-quote').classList.add('hidden');
-      document.getElementById('modal-quote').classList.remove('flex');
+      const m = document.getElementById('modal-quote');
+      if (m) {
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+      }
     }
 
     function handleSaveQuote(e) {
@@ -1569,13 +1606,20 @@
       document.getElementById('form-item-loc').value = '';
       document.getElementById('form-item-status').value = 'pending';
       toggleQCInputs('pending');
-      document.getElementById('modal-item').classList.remove('hidden');
-      document.getElementById('modal-item').classList.add('flex');
+      
+      const m = document.getElementById('modal-item');
+      if (m) {
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+      }
     }
 
     function closeItemModal() {
-      document.getElementById('modal-item').classList.add('hidden');
-      document.getElementById('modal-item').classList.remove('flex');
+      const m = document.getElementById('modal-item');
+      if (m) {
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+      }
     }
 
     function handleSaveItem(e) {
@@ -1645,12 +1689,18 @@
 
     function openQCModal() {
       populateDropdowns();
-      document.getElementById('modal-qc').classList.remove('hidden');
-      document.getElementById('modal-qc').classList.add('flex');
+      const m = document.getElementById('modal-qc');
+      if (m) {
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+      }
     }
     function closeQCModal() {
-      document.getElementById('modal-qc').classList.add('hidden');
-      document.getElementById('modal-qc').classList.remove('flex');
+      const m = document.getElementById('modal-qc');
+      if (m) {
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+      }
     }
     function openQuickDispatchModal() {
       switchTab('distribution');
