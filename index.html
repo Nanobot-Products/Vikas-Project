@@ -88,7 +88,7 @@
             <div class="flex items-center gap-2">
               <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white">Dashboard</h1>
               <span class="px-2 py-0.5 text-[11px] font-extrabold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                v2.4 Custom Sizes
+                v2.5 Live Sizes Grid
               </span>
             </div>
             <p class="text-xs text-slate-400">Vikas Jeerawala • Procurement, Vendor & Distribution Suite</p>
@@ -706,13 +706,17 @@
         </div>
 
         
-        <!-- NEW: Apparel Size Breakdown Box -->
+        <!-- NEW: Apparel Size Breakdown Box (Always Responsive with Presets) -->
         <div id="form-size-breakdown-box" class="p-3.5 rounded-xl bg-slate-900 border border-slate-750 space-y-2.5">
           <div class="flex items-center justify-between">
-            <label class="font-bold text-indigo-300 flex items-center gap-1.5">
+            <label class="font-bold text-indigo-300 flex items-center gap-1.5 text-xs">
               <i data-lucide="shirt" class="w-4 h-4"></i> Enter Exact Sizes (XS to 2XL):
             </label>
-            <span class="text-[11px] text-slate-400">Sum: <strong class="text-emerald-400" id="sizes-total-badge">0</strong> units</span>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="applySizePreset(100)" class="px-2 py-0.5 rounded bg-slate-850 hover:bg-slate-800 text-[10px] font-bold text-slate-300 border border-slate-700">100 Mix</button>
+              <button type="button" onclick="applySizePreset(200)" class="px-2 py-0.5 rounded bg-slate-850 hover:bg-slate-800 text-[10px] font-bold text-slate-300 border border-slate-700">200 Mix</button>
+              <span class="text-[11px] text-slate-400 ml-1">Sum: <strong class="text-emerald-400" id="sizes-total-badge">0</strong></span>
+            </div>
           </div>
           <div class="grid grid-cols-6 gap-2 text-center text-xs">
             <div>
@@ -740,6 +744,8 @@
               <input type="text" id="form-size-2xl" placeholder="0" onfocus="this.select()" oninput="handleSizeInputChanged()" class="w-full p-2 text-center rounded-lg bg-slate-800 border border-slate-700 text-white font-bold" />
             </div>
           </div>
+          <p class="text-[10px] text-slate-400">Type numbers in any box above (or click 100/200 mix). Total Qty will update automatically.</p>
+        </div>
           <p class="text-[10px] text-slate-400">Type numbers in any size box above. It automatically sums them into Total Ordered Qty.</p>
         </div>
 
@@ -1771,6 +1777,26 @@
           sizeBox.classList.add('hidden');
         }
       }
+    }
+
+    
+    function applySizePreset(tot) {
+      if (tot === 100) {
+        document.getElementById('form-size-xs').value = '5';
+        document.getElementById('form-size-s').value = '15';
+        document.getElementById('form-size-m').value = '40';
+        document.getElementById('form-size-l').value = '30';
+        document.getElementById('form-size-xl').value = '10';
+        document.getElementById('form-size-2xl').value = '0';
+      } else if (tot === 200) {
+        document.getElementById('form-size-xs').value = '10';
+        document.getElementById('form-size-s').value = '30';
+        document.getElementById('form-size-m').value = '80';
+        document.getElementById('form-size-l').value = '60';
+        document.getElementById('form-size-xl').value = '20';
+        document.getElementById('form-size-2xl').value = '0';
+      }
+      handleSizeInputChanged();
     }
 
     function handleSizeInputChanged() {
