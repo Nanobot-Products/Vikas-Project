@@ -1,0 +1,2326 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vikas's Inventory & Procurement Suite | TiE Yugaantar '26</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+            },
+            vikas: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- QRCode.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.3);
+      border-radius: 4px;
+    }
+    @media print {
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      body { background: white !important; color: black !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-full flex flex-col transition-colors duration-200">
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Top App Navigation -->
+  <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 gap-4">
+        
+        <!-- Brand & Title -->
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-emerald-500 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-500/20 flex-shrink-0">
+            <i data-lucide="package-check" class="w-6 h-6"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="font-bold text-lg text-slate-900 dark:text-white tracking-tight">TiE Yugaantar '26</span>
+              <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                Gifts & Merchandise
+              </span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 truncate hidden sm:block">
+              Vikas Jeerawala | Procurement, Vendor & Inventory Lead
+            </p>
+          </div>
+        </div>
+
+        <!-- Global Search & Quick Actions -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          <!-- Search Bar -->
+          <div class="relative hidden md:block w-64">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input 
+              type="text" 
+              id="global-search"
+              placeholder="Search SKU, vendor, recipient..." 
+              class="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg bg-slate-100 dark:bg-slate-800 border-none focus:ring-2 focus:ring-indigo-500 dark:text-white placeholder-slate-400"
+              oninput="handleGlobalSearch(this.value)"
+            />
+          </div>
+
+          <!-- Quick Actions -->
+          <button 
+            onclick="openQuickDispatchModal()"
+            class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 shadow-sm transition-all active:scale-95">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            <span>Quick Issue</span>
+          </button>
+
+          <button 
+            onclick="openItemModal()"
+            class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1.5 shadow-sm transition-all active:scale-95 hidden sm:flex">
+            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+            <span>Add SKU</span>
+          </button>
+
+          <!-- Theme Toggle -->
+          <button 
+            id="theme-toggle" 
+            onclick="toggleTheme()"
+            class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 dark:text-slate-400 transition-colors"
+            title="Toggle Theme">
+            <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+            <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
+          </button>
+
+          <!-- Profile Badge -->
+          <div class="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800">
+            <div class="w-8 h-8 rounded-full bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs ring-2 ring-indigo-500/20" title="Vikas Jeerawala - Procurement & Vendor Lead">
+              VJ
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex space-x-1 sm:space-x-2 overflow-x-auto custom-scroll py-2 no-scrollbar text-xs font-medium border-t border-slate-100 dark:border-slate-800">
+        <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-btn active-tab px-3 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap bg-indigo-600 text-white">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
+        </button>
+        <button onclick="switchTab('inventory')" id="tab-btn-inventory" class="tab-btn px-3 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="boxes" class="w-4 h-4"></i> Inventory & Sizes
+        </button>
+        <button onclick="switchTab('vendors')" id="tab-btn-vendors" class="tab-btn px-3 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="store" class="w-4 h-4"></i> Vendors & Quotes <span class="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300 text-[10px] font-bold">GM-05</span>
+        </button>
+        <button onclick="switchTab('qc')" id="tab-btn-qc" class="tab-btn px-3 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="clipboard-check" class="w-4 h-4"></i> Inwarding & QC <span class="px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300 text-[10px] font-bold">GM-07</span>
+        </button>
+        <button onclick="switchTab('distribution')" id="tab-btn-distribution" class="tab-btn px-3 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="truck" class="w-4 h-4"></i> Live Distribution <span class="px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300 text-[10px] font-bold">GM-08</span>
+        </button>
+        <button onclick="switchTab('deliverables')" id="tab-btn-deliverables" class="tab-btn px-3 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="milestone" class="w-4 h-4"></i> Deliverables (GM 1-8)
+        </button>
+        <button onclick="switchTab('weekly-report')" id="tab-btn-weekly-report" class="tab-btn px-3 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="file-text" class="w-4 h-4"></i> Meeting Briefing
+        </button>
+        <button onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn px-3 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <i data-lucide="database" class="w-4 h-4"></i> Backup & Export
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ========================================================================= -->
+    <!-- TAB 1: DASHBOARD -->
+    <!-- ========================================================================= -->
+    <div id="tab-dashboard" class="tab-content space-y-6">
+      
+      <!-- Top Banner: Vertical Objective & Next Milestones -->
+      <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-6 text-white shadow-xl border border-indigo-900/50">
+        <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
+          <div class="space-y-2 max-w-2xl">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Active Vertical Operations
+              </span>
+              <span class="text-xs text-slate-400">Target Period: Sept - Oct 2026</span>
+            </div>
+            <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white">
+              Gifts, Awards & Merchandise Command Hub
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              <strong class="text-indigo-300">Vertical Objective:</strong> Deliver thoughtful, premium and brand-consistent gifts, awards and merchandise with the right quantities, quality, budget and delivery buffer.
+            </p>
+          </div>
+          
+          <!-- Next Critical Milestones Widget -->
+          <div class="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 w-full lg:w-auto min-w-[280px]">
+            <div class="flex items-center justify-between text-xs text-slate-300 font-semibold mb-2">
+              <span class="flex items-center gap-1.5"><i data-lucide="calendar-clock" class="w-4 h-4 text-indigo-400"></i> Next Milestones</span>
+              <span class="text-emerald-400 font-bold">On Schedule</span>
+            </div>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center justify-between p-2 rounded bg-slate-900/60 border border-slate-700/50">
+                <div>
+                  <span class="font-bold text-amber-400">GM-01</span> Gift Strategy & Budget
+                </div>
+                <span class="text-[11px] font-semibold text-slate-300">By Sept 10</span>
+              </div>
+              <div class="flex items-center justify-between p-2 rounded bg-slate-900/60 border border-slate-700/50">
+                <div>
+                  <span class="font-bold text-indigo-400">GM-02/04</span> VIP Gifts & Merch Range
+                </div>
+                <span class="text-[11px] font-semibold text-slate-300">By Sept 20</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Metrics Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Metric 1: Total Stock Tracked -->
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider">Total Inventory Units</span>
+            <div class="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400">
+              <i data-lucide="layers" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span id="kpi-total-units" class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">0</span>
+            <span class="text-xs text-slate-500">Units across <span id="kpi-total-skus" class="font-semibold text-slate-700 dark:text-slate-300">0</span> SKUs</span>
+          </div>
+          <div class="mt-3 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
+            <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+            <span id="kpi-qc-passed-rate">0%</span> QC Passed
+          </div>
+        </div>
+
+        <!-- Metric 2: Procurement Spend & Budget -->
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider">Procurement Committed</span>
+            <div class="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400">
+              <i data-lucide="indian-rupee" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span id="kpi-total-spend" class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">₹0</span>
+          </div>
+          <div class="mt-3 flex items-center justify-between text-xs">
+            <span class="text-slate-500">Negotiated Savings:</span>
+            <span id="kpi-total-savings" class="font-bold text-emerald-600 dark:text-emerald-400">₹0</span>
+          </div>
+        </div>
+
+        <!-- Metric 3: Live Event Dispatched -->
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider">Dispatched / Issued</span>
+            <div class="p-2 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400">
+              <i data-lucide="gift" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span id="kpi-dispatched-units" class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">0</span>
+            <span class="text-xs text-slate-500">/ <span id="kpi-available-units" class="font-semibold">0</span> available</span>
+          </div>
+          <div class="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+            <div id="kpi-dispatch-bar" class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- Metric 4: Vendor & PO Health -->
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider">Vendors & Quotations</span>
+            <div class="p-2 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400">
+              <i data-lucide="briefcase" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span id="kpi-total-vendors" class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">0</span>
+            <span class="text-xs text-slate-500">active suppliers</span>
+          </div>
+          <div class="mt-3 flex items-center justify-between text-xs">
+            <span class="text-slate-500">Avg Delivery Buffer:</span>
+            <span class="font-bold text-indigo-600 dark:text-indigo-400">7.5 Days safety</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts & Visual Insights -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Chart 1: Category Distribution -->
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <i data-lucide="pie-chart" class="w-4 h-4 text-indigo-500"></i>
+              Inventory by Category
+            </h3>
+            <span class="text-xs text-slate-400">Volume Units</span>
+          </div>
+          <div class="h-56 relative flex items-center justify-center">
+            <canvas id="chart-categories"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 2: Fulfillment & QC Funnel -->
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm lg:col-span-2">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <i data-lucide="bar-chart-3" class="w-4 h-4 text-emerald-500"></i>
+              SKU Stock & Dispatch Balance
+            </h3>
+            <span class="text-xs text-slate-400">Passed QC vs Issued</span>
+          </div>
+          <div class="h-56 relative">
+            <canvas id="chart-fulfillment"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vertical Co-Leads Accountability Card -->
+      <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">Gifts & Merchandise Vertical Accountability</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Member roles and core responsibilities for TiE Yugaantar '26</p>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+            3 Team Members
+          </span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Ashish Jain -->
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/50 space-y-2">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-amber-500/10 text-amber-600 font-bold flex items-center justify-center text-xs">AJ</div>
+              <div>
+                <h4 class="text-sm font-bold text-slate-900 dark:text-white">Ashish Jain</h4>
+                <p class="text-xs font-semibold text-amber-600 dark:text-amber-400">Gifts & Awards Lead (Primary)</p>
+              </div>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              Own selection strategy, premium gifts, awards/prizes and final approvals.
+            </p>
+          </div>
+
+          <!-- Vikas Jeerawala -->
+          <div class="p-4 rounded-xl border-2 border-indigo-500 bg-indigo-50/30 dark:bg-indigo-950/20 space-y-2 relative">
+            <span class="absolute top-3 right-3 px-2 py-0.5 text-[10px] font-bold rounded-full bg-indigo-600 text-white">YOU</span>
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center text-xs">VJ</div>
+              <div>
+                <h4 class="text-sm font-bold text-slate-900 dark:text-white">Vikas Jeerawala</h4>
+                <p class="text-xs font-semibold text-indigo-600 dark:text-indigo-400">Procurement & Vendor Lead</p>
+              </div>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              Own quotations, negotiation, ordering, quality checks, inventory and delivery.
+            </p>
+          </div>
+
+          <!-- Nitesh Mathur -->
+          <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/50 space-y-2">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-blue-500/10 text-blue-600 font-bold flex items-center justify-center text-xs">NM</div>
+              <div>
+                <h4 class="text-sm font-bold text-slate-900 dark:text-white">Nitesh Mathur</h4>
+                <p class="text-xs font-semibold text-blue-600 dark:text-blue-400">Branding & Communication</p>
+              </div>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              Own artwork, brand application, packaging, announcement assets and merchandise communication.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 2: INVENTORY & SIZES -->
+    <!-- ========================================================================= -->
+    <div id="tab-inventory" class="tab-content hidden space-y-6">
+      
+      <!-- Header & Action Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center gap-2 flex-wrap">
+          <!-- Category Filter Buttons -->
+          <button onclick="filterInventoryByCategory('all')" id="filter-cat-all" class="cat-filter active-filter px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 text-white">All SKUs</button>
+          <button onclick="filterInventoryByCategory('VIP Gifts')" id="filter-cat-vip" class="cat-filter px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200">VIP Gifts</button>
+          <button onclick="filterInventoryByCategory('Awards & Prizes')" id="filter-cat-awards" class="cat-filter px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200">Awards & Trophies</button>
+          <button onclick="filterInventoryByCategory('Merchandise')" id="filter-cat-merch" class="cat-filter px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200">Merchandise (Apparel/Bags)</button>
+          <button onclick="filterInventoryByCategory('Delegate Kits')" id="filter-cat-kits" class="cat-filter px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200">Delegate Kits</button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button 
+            onclick="openItemModal()" 
+            class="px-4 py-2 text-xs font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1.5 shadow-sm transition-all">
+            <i data-lucide="plus" class="w-4 h-4"></i> Add New SKU
+          </button>
+        </div>
+      </div>
+
+      <!-- Inventory Items List Grid -->
+      <div id="inventory-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Dynamic SKU Cards rendered here -->
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 3: VENDORS & QUOTATIONS (GM-05) -->
+    <!-- ========================================================================= -->
+    <div id="tab-vendors" class="tab-content hidden space-y-6">
+      
+      <!-- Vendor Lead & GM-05 Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300">
+              Deliverable GM-05
+            </span>
+            <h2 class="text-base font-bold text-slate-900 dark:text-white">Vendor Directory & Quotation Matrix</h2>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            Vikas's core mandate: Minimum viable quotes, negotiated rates, GST, and delivery safety buffers (Target by Sept 30).
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="openVendorModal()" class="px-3.5 py-2 text-xs font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="user-plus" class="w-4 h-4"></i> Add Supplier
+          </button>
+          <button onclick="openQuoteModal()" class="px-3.5 py-2 text-xs font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Log New Quote
+          </button>
+        </div>
+      </div>
+
+      <!-- Quotation Comparison Sheet -->
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="scale" class="w-4 h-4 text-indigo-500"></i>
+            Active Quotations & Negotiation Matrix
+          </h3>
+          <span class="text-xs text-slate-500">Compare suppliers side-by-side</span>
+        </div>
+        <div class="overflow-x-auto custom-scroll">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold">
+              <tr>
+                <th class="p-3 rounded-l-lg">SKU Item</th>
+                <th class="p-3">Vendor Name</th>
+                <th class="p-3 text-right">Unit Rate</th>
+                <th class="p-3 text-right">GST %</th>
+                <th class="p-3 text-right">Total Qty</th>
+                <th class="p-3 text-right">Total Amount</th>
+                <th class="p-3 text-center">Lead Time</th>
+                <th class="p-3 text-center">Buffer</th>
+                <th class="p-3 text-center">Sample</th>
+                <th class="p-3 text-center">Status</th>
+                <th class="p-3 rounded-r-lg text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody id="quotes-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
+              <!-- Dynamic quotes rendered here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Vendor Directory Cards Grid -->
+      <div class="space-y-3">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i data-lucide="building-2" class="w-4 h-4 text-emerald-500"></i>
+          Verified Supplier Directory
+        </h3>
+        <div id="vendors-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Dynamic vendor cards rendered here -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 4: INWARDING & QC (GM-07) -->
+    <!-- ========================================================================= -->
+    <div id="tab-qc" class="tab-content hidden space-y-6">
+      
+      <!-- Inwarding & QC Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300">
+              Deliverable GM-07
+            </span>
+            <h2 class="text-base font-bold text-slate-900 dark:text-white">Production Inwarding & QC Inspection Station</h2>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            Order verification, physical counting, photographic QC, and storage bin allocation (Target by Oct 20).
+          </p>
+        </div>
+        <button onclick="openQCModal()" class="px-4 py-2 text-xs font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 shadow-sm">
+          <i data-lucide="check-square" class="w-4 h-4"></i> New Batch Inspection
+        </button>
+      </div>
+
+      <!-- Inspection Summary Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 p-4 rounded-xl">
+          <div class="text-xs font-semibold text-emerald-800 dark:text-emerald-300 uppercase">Total Inspected Units</div>
+          <div id="qc-total-inspected" class="text-2xl font-bold text-emerald-900 dark:text-emerald-100 mt-1">0</div>
+          <p class="text-[11px] text-emerald-700 dark:text-emerald-400 mt-1">100% physically counted at warehouse</p>
+        </div>
+        <div class="bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 p-4 rounded-xl">
+          <div class="text-xs font-semibold text-indigo-800 dark:text-indigo-300 uppercase">QC Approved Units</div>
+          <div id="qc-total-passed" class="text-2xl font-bold text-indigo-900 dark:text-indigo-100 mt-1">0</div>
+          <p class="text-[11px] text-indigo-700 dark:text-indigo-400 mt-1">Ready for event staging & distribution</p>
+        </div>
+        <div class="bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 p-4 rounded-xl">
+          <div class="text-xs font-semibold text-rose-800 dark:text-rose-300 uppercase">Defects / Rejected</div>
+          <div id="qc-total-failed" class="text-2xl font-bold text-rose-900 dark:text-rose-100 mt-1">0</div>
+          <p class="text-[11px] text-rose-700 dark:text-rose-400 mt-1">Vendor claims logged & replaced</p>
+        </div>
+      </div>
+
+      <!-- QC Inspection Logs Table -->
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="history" class="w-4 h-4 text-emerald-500"></i>
+            Quality Inspection Audit Log
+          </h3>
+          <span class="text-xs text-slate-400">Verified by Vikas Jeerawala</span>
+        </div>
+        <div class="overflow-x-auto custom-scroll">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold">
+              <tr>
+                <th class="p-3 rounded-l-lg">Date / Batch ID</th>
+                <th class="p-3">SKU Item</th>
+                <th class="p-3 text-right">Inspected</th>
+                <th class="p-3 text-right">Passed</th>
+                <th class="p-3 text-right">Failed</th>
+                <th class="p-3">Defect Reason & Evidence</th>
+                <th class="p-3">Storage Location</th>
+                <th class="p-3 rounded-r-lg">Vendor Action Taken</th>
+              </tr>
+            </thead>
+            <tbody id="qc-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
+              <!-- Dynamic QC logs rendered here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 5: LIVE EVENT DISTRIBUTION (GM-08) -->
+    <!-- ========================================================================= -->
+    <div id="tab-distribution" class="tab-content hidden space-y-6">
+      
+      <!-- Live Distribution Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-emerald-900 via-slate-900 to-indigo-950 p-5 rounded-2xl text-white shadow-lg">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/30 text-emerald-300 border border-emerald-500/40">
+              Deliverable GM-08
+            </span>
+            <h2 class="text-base font-bold text-white">Event-Day Issue Control & Live Distribution Desk</h2>
+          </div>
+          <p class="text-xs text-slate-300 mt-1">
+            Fast-scan issue logging for VIP gifts, delegate kits, awards and merchandise with real-time stock deduction.
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="exportDistributionCSV()" class="px-3.5 py-2 text-xs font-semibold rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 flex items-center gap-1.5">
+            <i data-lucide="download" class="w-4 h-4"></i> Export Distribution Log (CSV)
+          </button>
+        </div>
+      </div>
+
+      <!-- Interactive Quick Dispatch Form + Live Balances -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Dispatch Form (Left 2 cols) -->
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm lg:col-span-2 space-y-4">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="zap" class="w-4 h-4 text-emerald-500"></i>
+            Quick Issue & Dispatch Item
+          </h3>
+          
+          <form id="quick-dispatch-form" onsubmit="handleIssueItem(event)" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <!-- Recipient Name -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Recipient Name / Dignitary *</label>
+                <input 
+                  type="text" 
+                  id="disp-recipient" 
+                  required
+                  placeholder="e.g. Dr. Arvind Kejriwal, Chief Guest" 
+                  class="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <!-- Recipient Category -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Recipient Category *</label>
+                <select 
+                  id="disp-category" 
+                  class="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-emerald-500">
+                  <option value="VIP">VIP / Chief Guest</option>
+                  <option value="Speaker">Speaker / Panelist</option>
+                  <option value="Award Winner">Award Winner / Finalist</option>
+                  <option value="Delegate">Registered Delegate</option>
+                  <option value="Sponsor">Sponsor / Partner</option>
+                  <option value="Volunteer">Volunteer / Core Team</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Item Select -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Item to Issue *</label>
+                <select 
+                  id="disp-sku" 
+                  required
+                  onchange="handleDispSKUChange()"
+                  class="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-emerald-500">
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+
+              <!-- Size selector (if applicable) -->
+              <div id="disp-size-container" class="hidden">
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Size *</label>
+                <select 
+                  id="disp-size" 
+                  class="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-emerald-500">
+                  <option value="XS">XS</option>
+                  <option value="S">S</option>
+                  <option value="M" selected>M</option>
+                  <option value="L">L</option>
+                  <option value="XL">XL</option>
+                  <option value="2XL">2XL</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Quantity</label>
+                <input 
+                  type="number" 
+                  id="disp-qty" 
+                  min="1" 
+                  value="1"
+                  class="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+            </div>
+
+            <!-- Notes / Handover Location -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Handover Location / Notes</label>
+              <input 
+                type="text" 
+                id="disp-notes" 
+                placeholder="e.g. VIP Greenroom Stage 1, Registration Counter #3" 
+                class="w-full p-2.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white focus:ring-2 focus:ring-emerald-500"
+              />
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+              <div class="flex items-center gap-2">
+                <input type="checkbox" id="disp-sig-check" checked class="rounded text-emerald-600 focus:ring-emerald-500">
+                <label for="disp-sig-check" class="text-xs text-slate-600 dark:text-slate-400 font-medium">Mark as Handed Over & Verified</label>
+              </div>
+
+              <button 
+                type="submit" 
+                class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-emerald-600/20 active:scale-95 transition-all">
+                <i data-lucide="send" class="w-4 h-4"></i>
+                <span>Complete Issue & Deduct Stock</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Live Stock Balance Summary (Right col) -->
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="activity" class="w-4 h-4 text-indigo-500"></i>
+            Live Real-time Stock Balance
+          </h3>
+          <div id="live-balances-list" class="space-y-3">
+            <!-- Dynamically rendered live balances -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Live Distribution Log Table -->
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="file-spreadsheet" class="w-4 h-4 text-indigo-500"></i>
+            Distribution & Issue Log
+          </h3>
+          <span class="text-xs text-slate-400">Real-time audit trail</span>
+        </div>
+        <div class="overflow-x-auto custom-scroll">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold">
+              <tr>
+                <th class="p-3 rounded-l-lg">Timestamp</th>
+                <th class="p-3">Recipient</th>
+                <th class="p-3">Category</th>
+                <th class="p-3">Item Issued</th>
+                <th class="p-3 text-center">Size</th>
+                <th class="p-3 text-right">Qty</th>
+                <th class="p-3">Issuer</th>
+                <th class="p-3">Notes / Location</th>
+                <th class="p-3 rounded-r-lg text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody id="distribution-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
+              <!-- Dynamic distribution log -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 6: DELIVERABLES ROADMAP (GM-01 to GM-08) -->
+    <!-- ========================================================================= -->
+    <div id="tab-deliverables" class="tab-content hidden space-y-6">
+      
+      <!-- Deliverables Header -->
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-base font-bold text-slate-900 dark:text-white">Gifts & Merchandise Vertical Deliverables & Definition of Done</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            Direct tracking of official deliverables GM-01 through GM-08 with target phases and weekly evidence.
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-slate-500">Vertical Leads:</span>
+          <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300">Ashish Jain</span>
+          <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300">Vikas Jeerawala</span>
+          <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300">Nitesh Mathur</span>
+        </div>
+      </div>
+
+      <!-- Deliverables Cards / List -->
+      <div id="deliverables-grid" class="space-y-4">
+        <!-- Dynamically rendered GM-01 to GM-08 cards -->
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 7: WEEKLY MEETING BRIEFING -->
+    <!-- ========================================================================= -->
+    <div id="tab-weekly-report" class="tab-content hidden space-y-6">
+      
+      <!-- Meeting Rule Callout Banner -->
+      <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5 text-slate-800 dark:text-slate-100 space-y-2">
+        <div class="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold text-xs uppercase tracking-wider">
+          <i data-lucide="alert-triangle" class="w-4 h-4"></i> Vertical Meeting Golden Rule
+        </div>
+        <p class="text-xs sm:text-sm font-medium leading-relaxed">
+          <em>"The Primary Lead (Ashish Jain) should present the consolidated position. Co-leads (Vikas Jeerawala & Nitesh Mathur) should update their own items before the meeting so the discussion is about <strong>decisions and exceptions—not status collection</strong>."</em>
+        </p>
+      </div>
+
+      <!-- Executive Briefing Preview Document -->
+      <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md space-y-6" id="meeting-briefing-doc">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
+          <div>
+            <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Consolidated Weekly Briefing</span>
+            <h2 class="text-xl font-extrabold text-slate-900 dark:text-white mt-1">TiE Yugaantar '26 | Gifts, Awards & Merchandise</h2>
+            <p class="text-xs text-slate-500 mt-1" id="briefing-date-str">Generated for Executive Vertical Review | Lead: Vikas Jeerawala</p>
+          </div>
+          <div class="flex items-center gap-2 no-print">
+            <button onclick="copyBriefingText()" class="px-3.5 py-2 text-xs font-semibold rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 flex items-center gap-1.5 hover:bg-indigo-100 transition-colors">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy for WhatsApp/Email
+            </button>
+            <button onclick="window.print()" class="px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 flex items-center gap-1.5 transition-colors">
+              <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print / Save PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 1: Decisions Required from Leadership -->
+        <div class="space-y-3">
+          <h3 class="text-sm font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider flex items-center gap-2">
+            <i data-lucide="help-circle" class="w-4 h-4"></i> 1. Key Decisions Required (Immediate)
+          </h3>
+          <div class="bg-rose-50/50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/50 rounded-xl p-4 text-xs space-y-2">
+            <div class="flex items-start gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mt-1.5 flex-shrink-0"></span>
+              <div>
+                <strong>VIP Gift Sample Final Sign-Off:</strong> Confirm final selection between Marwar Crafts brass inlay box (₹1,650) vs Rajasthan Souvenirs (₹1,780) with Ashish Jain by Sept 10.
+              </div>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mt-1.5 flex-shrink-0"></span>
+              <div>
+                <strong>Artwork Master Assets Sign-Off:</strong> Need vector lockup for combined TiE + Yugaantar logo from Nitesh Mathur by Sept 12 to release apparel print proofs.
+              </div>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mt-1.5 flex-shrink-0"></span>
+              <div>
+                <strong>Awards Presentation Sequence:</strong> Ashish Jain to verify exact count of 15 category crystal trophies & 45 winner certificate leather folders.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Exceptions & Operational Risks -->
+        <div class="space-y-3">
+          <h3 class="text-sm font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider flex items-center gap-2">
+            <i data-lucide="alert-octagon" class="w-4 h-4"></i> 2. Exceptions & Delivery Buffers
+          </h3>
+          <div class="bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-xl p-4 text-xs space-y-2">
+            <div class="flex items-start gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 flex-shrink-0"></span>
+              <div>
+                <strong>Buffer Health:</strong> All selected suppliers (ThreadCraft, Marwar Crafts, PrintMatrix) meet the required 7-10 days safety buffer prior to event dates.
+              </div>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 flex-shrink-0"></span>
+              <div>
+                <strong>QC Inspection Results:</strong> 98.6% pass rate. 2 defective VIP boxes and 4 misaligned polos logged; supplier credit and replacement underway.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Financial & Procurement Summary -->
+        <div class="space-y-3">
+          <h3 class="text-sm font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-2">
+            <i data-lucide="trending-up" class="w-4 h-4"></i> 3. Procurement Financial Position
+          </h3>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+              <span class="text-slate-500">Allocated Budget:</span>
+              <div class="text-base font-bold text-slate-900 dark:text-white mt-0.5">₹4,50,000</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+              <span class="text-slate-500">Committed PO Value:</span>
+              <div id="briefing-po-val" class="text-base font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">₹3,88,500</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+              <span class="text-slate-500">Negotiated Savings:</span>
+              <div id="briefing-savings-val" class="text-base font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">₹61,500 (13.6%)</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+              <span class="text-slate-500">Available Cushion:</span>
+              <div class="text-base font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">₹61,500</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4: Lead Sign-off Block -->
+        <div class="pt-4 border-t border-slate-200 dark:border-slate-800 grid grid-cols-3 gap-4 text-center text-xs text-slate-500">
+          <div>
+            <div class="font-bold text-slate-800 dark:text-slate-200">Ashish Jain</div>
+            <div>Gifts & Awards Lead (Primary)</div>
+          </div>
+          <div>
+            <div class="font-bold text-indigo-600 dark:text-indigo-400">Vikas Jeerawala</div>
+            <div>Procurement & Vendor Lead</div>
+          </div>
+          <div>
+            <div class="font-bold text-slate-800 dark:text-slate-200">Nitesh Mathur</div>
+            <div>Branding & Communication</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 8: BACKUP, EXPORT & SETTINGS -->
+    <!-- ========================================================================= -->
+    <div id="tab-settings" class="tab-content hidden space-y-6">
+      
+      <!-- Header -->
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <h2 class="text-base font-bold text-slate-900 dark:text-white">Data Persistence, Backup & Vercel Deployment</h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          Manage local backups, export spreadsheets, and view 1-click deployment commands for GitHub and Vercel.
+        </p>
+      </div>
+
+      <!-- Backup & Restore Actions -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Local Backup Card -->
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="hard-drive-download" class="w-4 h-4 text-indigo-500"></i>
+            Backup & Spreadsheet Exports
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            All inventory data, quotations, and distribution entries are saved automatically in your browser's persistent storage.
+          </p>
+          <div class="space-y-2">
+            <button onclick="exportFullBackupJSON()" class="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center justify-center gap-2 shadow-sm">
+              <i data-lucide="download" class="w-4 h-4"></i> Download Full Database (JSON Backup)
+            </button>
+            <button onclick="exportInventoryCSV()" class="w-full py-2.5 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center justify-center gap-2">
+              <i data-lucide="table" class="w-4 h-4"></i> Export Inventory Master (CSV)
+            </button>
+            <button onclick="exportDistributionCSV()" class="w-full py-2.5 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center justify-center gap-2">
+              <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Export Distribution Audit Log (CSV)
+            </button>
+          </div>
+        </div>
+
+        <!-- Restore / Reset Card -->
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="upload-cloud" class="w-4 h-4 text-emerald-500"></i>
+            Restore or Reset Database
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            Upload a previous JSON backup file to restore all records, or reset to original sample data.
+          </p>
+          <div class="space-y-3">
+            <input type="file" id="import-file-input" accept=".json" onchange="handleImportJSON(event)" class="hidden" />
+            <button onclick="document.getElementById('import-file-input').click()" class="w-full py-2.5 px-4 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-500 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center justify-center gap-2">
+              <i data-lucide="upload" class="w-4 h-4"></i> Upload JSON Backup File
+            </button>
+            <button onclick="resetToDefaultData()" class="w-full py-2 px-4 rounded-xl bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100 text-xs font-semibold flex items-center justify-center gap-2">
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset to Charter Sample Data
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- GitHub & Vercel Instructions Guide Card -->
+      <div class="bg-gradient-to-r from-slate-900 to-indigo-950 p-6 rounded-2xl text-white shadow-xl border border-indigo-900/50 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="rocket" class="w-5 h-5 text-indigo-400"></i>
+            How to Deploy on GitHub & Vercel in 2 Minutes
+          </h3>
+          <span class="px-2.5 py-1 rounded-full text-xs bg-indigo-500/20 text-indigo-300 font-semibold">Zero-Config Ready</span>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <!-- Step 1: GitHub -->
+          <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+            <div class="font-bold text-indigo-300 flex items-center gap-2">
+              <i data-lucide="github" class="w-4 h-4"></i> Step 1: Push to GitHub
+            </div>
+            <ol class="list-decimal list-inside space-y-1.5 text-slate-300">
+              <li>Create a new repository on <a href="https://github.com/new" target="_blank" class="text-indigo-400 underline">github.com/new</a> named <code class="bg-black/30 px-1 py-0.5 rounded text-white">vikas-inventory-app</code>.</li>
+              <li>Open terminal in project directory:
+                <pre class="bg-black/50 p-2 rounded text-[11px] text-emerald-400 font-mono mt-1 overflow-x-auto">git init
+git add .
+git commit -m "Initial TiE inventory suite commit"
+git branch -M main
+git remote add origin https://github.com/YOUR_USER/vikas-inventory-app.git
+git push -u origin main</pre>
+              </li>
+            </ol>
+          </div>
+
+          <!-- Step 2: Vercel -->
+          <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+            <div class="font-bold text-emerald-300 flex items-center gap-2">
+              <i data-lucide="triangle" class="w-4 h-4"></i> Step 2: Deploy to Vercel
+            </div>
+            <ol class="list-decimal list-inside space-y-1.5 text-slate-300">
+              <li>Open <a href="https://vercel.com/new" target="_blank" class="text-emerald-400 underline">vercel.com/new</a> and select your GitHub repository.</li>
+              <li>Leave all default settings as is (Framework: Other / Static).</li>
+              <li>Click <strong>Deploy</strong>!</li>
+              <li>Your app will be live globally at:
+                <div class="bg-black/50 p-2 rounded text-[11px] text-indigo-300 font-mono mt-1">
+                  https://vikas-inventory-app.vercel.app
+                </div>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- MODALS -->
+  <!-- ========================================================================= -->
+
+  <!-- Modal 1: Add/Edit SKU -->
+  <div id="item-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 max-h-[90vh] overflow-y-auto custom-scroll">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <h3 id="item-modal-title" class="text-sm font-bold text-slate-900 dark:text-white">Add New Inventory SKU</h3>
+        <button onclick="closeItemModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form id="item-form" onsubmit="handleSaveItem(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="item-id" />
+        
+        <div>
+          <label class="block font-semibold mb-1">Item Name *</label>
+          <input type="text" id="item-name" required placeholder="e.g. Jodhpur Souvenir Keepsake Box" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold mb-1">Category *</label>
+            <select id="item-category" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white">
+              <option value="VIP Gifts">VIP Gifts</option>
+              <option value="Awards & Prizes">Awards & Prizes</option>
+              <option value="Merchandise">Merchandise</option>
+              <option value="Delegate Kits">Delegate Kits</option>
+              <option value="Collaterals & Packaging">Collaterals & Packaging</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">SKU Code *</label>
+            <input type="text" id="item-sku-code" required placeholder="SKU-VIP-02" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block font-semibold mb-1">Target Price (₹)</label>
+            <input type="number" id="item-target-price" min="0" placeholder="1800" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Unit Cost (₹) *</label>
+            <input type="number" id="item-unit-cost" required min="0" placeholder="1650" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">GST %</label>
+            <input type="number" id="item-gst" min="0" max="28" value="12" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold mb-1">Total Ordered Qty *</label>
+            <input type="number" id="item-ordered-qty" required min="1" placeholder="100" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Min Stock Alert Threshold</label>
+            <input type="number" id="item-min-stock" min="1" value="10" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1">Storage Bin / Location</label>
+          <input type="text" id="item-location" placeholder="e.g. Main Warehouse - Rack B4" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1">Description / Specifications</label>
+          <textarea id="item-description" rows="2" placeholder="Item specifications, dimensions, material quality notes..." class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <button type="button" onclick="closeItemModal()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold">Save Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Add Vendor -->
+  <div id="vendor-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white">Add Supplier / Vendor</h3>
+        <button onclick="closeVendorModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form id="vendor-form" onsubmit="handleSaveVendor(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-semibold mb-1">Vendor / Company Name *</label>
+          <input type="text" id="vend-name" required placeholder="e.g. Marwar Craft & Heritage Emporium" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold mb-1">Contact Person *</label>
+            <input type="text" id="vend-contact" required placeholder="Rameshwar Gehlot" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Phone / WhatsApp *</label>
+            <input type="text" id="vend-phone" required placeholder="+91 98290 12345" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold mb-1">Email Address</label>
+            <input type="email" id="vend-email" placeholder="vendor@domain.com" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">City / Location</label>
+            <input type="text" id="vend-city" placeholder="Jodhpur, Rajasthan" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold mb-1">GSTIN Number</label>
+            <input type="text" id="vend-gstin" placeholder="08AABCM5678P1Z3" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Delivery Buffer Days</label>
+            <input type="number" id="vend-buffer" min="1" value="7" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+          </div>
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Payment Terms</label>
+          <input type="text" id="vend-terms" placeholder="30% Advance, 70% upon delivery & QC" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <button type="button" onclick="closeVendorModal()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold">Add Supplier</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 3: Add Quotation -->
+  <div id="quote-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white">Log Vendor Quotation</h3>
+        <button onclick="closeQuoteModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form id="quote-form" onsubmit="handleSaveQuote(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-semibold mb-1">Select SKU Item *</label>
+          <select id="quote-sku" required class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white"></select>
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Select Vendor *</label>
+          <select id="quote-vendor" required class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white"></select>
+        </div>
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block font-semibold mb-1">Quoted Rate (₹) *</label>
+            <input type="number" id="quote-rate" required min="1" placeholder="1650" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">GST %</label>
+            <input type="number" id="quote-gst" min="0" max="28" value="12" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Lead Time (Days)</label>
+            <input type="number" id="quote-lead-time" min="1" value="14" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold mb-1">Safety Buffer (Days)</label>
+            <input type="number" id="quote-buffer" min="1" value="8" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Quotation Status</label>
+            <select id="quote-status" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white">
+              <option value="Under Review">Under Review</option>
+              <option value="Selected">Selected / Approved</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Negotiation Notes</label>
+          <input type="text" id="quote-notes" placeholder="e.g. Negotiated 10% discount on volume commitment" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <button type="button" onclick="closeQuoteModal()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold">Save Quote</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 4: Batch QC Inwarding -->
+  <div id="qc-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white">Batch Inwarding & Quality Check (GM-07)</h3>
+        <button onclick="closeQCModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form id="qc-form" onsubmit="handleSaveQC(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-semibold mb-1">Select Inwarded SKU Item *</label>
+          <select id="qc-sku" required class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white"></select>
+        </div>
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block font-semibold mb-1">Total Inspected *</label>
+            <input type="number" id="qc-inspected" required min="1" placeholder="60" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" oninput="calculateQCPassed()" />
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">QC Passed *</label>
+            <input type="number" id="qc-passed" required min="0" placeholder="58" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" oninput="calculateQCFailed()" />
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Defective / Reject</label>
+            <input type="number" id="qc-failed" min="0" value="0" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+          </div>
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Storage Bin / Location Tag</label>
+          <input type="text" id="qc-storage-bin" placeholder="e.g. Backstage Storage - Cupboard A1" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Defect Observations / Reason</label>
+          <input type="text" id="qc-defects" placeholder="e.g. Minor stitching flaw, packaging box dent" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">Vendor Claim / Corrective Action</label>
+          <input type="text" id="qc-vendor-action" placeholder="e.g. Vendor replacement scheduled, credit note issued" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-white" />
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <button type="button" onclick="closeQCModal()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold">Record Inwarding</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 5: QR Code Viewer -->
+  <div id="qr-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 text-center space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <h3 id="qr-modal-title" class="text-sm font-bold text-slate-900 dark:text-white">Storage Tag & QR Code</h3>
+        <button onclick="closeQRModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div id="qrcode-target" class="flex items-center justify-center p-4 bg-white rounded-xl mx-auto w-fit shadow-inner"></div>
+      <p id="qr-modal-sub" class="text-xs text-slate-500"></p>
+      <button onclick="window.print()" class="w-full py-2 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-semibold text-xs">Print Storage Label</button>
+    </div>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    // State initialization from LocalStorage or Default JSON
+    const STORAGE_KEY = 'VIKAS_INVENTORY_STORE_v1';
+    let appState = null;
+    let categoryChart = null;
+    let fulfillmentChart = null;
+    let currentCategoryFilter = 'all';
+
+    // Theme Management
+    function initTheme() {
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+
+    function toggleTheme() {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
+      }
+      renderCharts();
+    }
+
+    // App Initialization
+    async function initApp() {
+      initTheme();
+      const savedData = localStorage.getItem(STORAGE_KEY);
+      if (savedData) {
+        try {
+          appState = JSON.parse(savedData);
+        } catch(e) {
+          console.error('Error parsing local storage, falling back to initial data', e);
+        }
+      }
+
+      if (!appState) {
+        try {
+          const res = await fetch('initial_data.json');
+          appState = await res.json();
+          saveState();
+        } catch (e) {
+          console.error('Failed to load initial_data.json, creating fallback', e);
+          appState = { inventory: [], vendors: [], quotations: [], distributions: [], deliverables: [], qcInspections: [] };
+        }
+      }
+
+      renderAll();
+      lucide.createIcons();
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+    }
+
+    // Toast Notification Utility
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const bgColor = type === 'success' ? 'bg-emerald-600 text-white' : type === 'error' ? 'bg-rose-600 text-white' : 'bg-slate-900 text-white';
+      toast.className = `${bgColor} px-4 py-3 rounded-xl shadow-lg text-xs font-semibold flex items-center gap-2 transition-all transform duration-300 pointer-events-auto`;
+      toast.innerHTML = `<i data-lucide="${type === 'success' ? 'check-circle-2' : 'alert-circle'}" class="w-4 h-4"></i><span>${message}</span>`;
+      container.appendChild(toast);
+      lucide.createIcons();
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Navigation Switcher
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active-tab', 'bg-indigo-600', 'text-white');
+        btn.classList.add('text-slate-600', 'dark:text-slate-400');
+      });
+
+      const targetTab = document.getElementById(`tab-${tabId}`);
+      const targetBtn = document.getElementById(`tab-btn-${tabId}`);
+      if (targetTab && targetBtn) {
+        targetTab.classList.remove('hidden');
+        targetBtn.classList.add('active-tab', 'bg-indigo-600', 'text-white');
+        targetBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+      }
+
+      if (tabId === 'dashboard') {
+        setTimeout(renderCharts, 100);
+      }
+      lucide.createIcons();
+    }
+
+    // Global Search Filter
+    function handleGlobalSearch(query) {
+      const q = query.toLowerCase().trim();
+      if (!q) {
+        renderInventoryList();
+        return;
+      }
+      const filtered = appState.inventory.filter(item => 
+        item.name.toLowerCase().includes(q) ||
+        item.id.toLowerCase().includes(q) ||
+        item.category.toLowerCase().includes(q) ||
+        (item.storageLocation && item.storageLocation.toLowerCase().includes(q))
+      );
+      renderInventoryCards(filtered);
+    }
+
+    // Render All Views
+    function renderAll() {
+      renderDashboardKPIs();
+      renderInventoryList();
+      renderVendorsView();
+      renderQCLogs();
+      renderDistributionLog();
+      renderDeliverables();
+      renderBriefing();
+      populateDropdowns();
+      setTimeout(renderCharts, 100);
+    }
+
+    // 1. DASHBOARD RENDER
+    function renderDashboardKPIs() {
+      let totalUnits = 0;
+      let totalPassed = 0;
+      let totalDispatched = 0;
+      let totalSpend = 0;
+      let totalSavings = 0;
+
+      appState.inventory.forEach(item => {
+        const ordered = item.orderedQty || 0;
+        const passed = item.qcPassedQty || ordered;
+        const dispatched = item.dispatchedQty || 0;
+        const cost = item.unitCost || 0;
+        const target = item.targetPrice || cost;
+
+        totalUnits += ordered;
+        totalPassed += passed;
+        totalDispatched += dispatched;
+        totalSpend += (ordered * cost);
+        if (target > cost) {
+          totalSavings += (ordered * (target - cost));
+        }
+      });
+
+      const qcRate = totalUnits > 0 ? Math.round((totalPassed / totalUnits) * 100) : 100;
+      const dispatchRate = totalPassed > 0 ? Math.round((totalDispatched / totalPassed) * 100) : 0;
+
+      document.getElementById('kpi-total-units').innerText = totalUnits.toLocaleString();
+      document.getElementById('kpi-total-skus').innerText = appState.inventory.length;
+      document.getElementById('kpi-qc-passed-rate').innerText = `${qcRate}%`;
+      document.getElementById('kpi-total-spend').innerText = `₹${totalSpend.toLocaleString()}`;
+      document.getElementById('kpi-total-savings').innerText = `₹${totalSavings.toLocaleString()}`;
+      document.getElementById('kpi-dispatched-units').innerText = totalDispatched.toLocaleString();
+      document.getElementById('kpi-available-units').innerText = totalPassed.toLocaleString();
+      document.getElementById('kpi-dispatch-bar').style.width = `${dispatchRate}%`;
+      document.getElementById('kpi-total-vendors').innerText = appState.vendors.length;
+    }
+
+    function renderCharts() {
+      const isDark = document.documentElement.classList.contains('dark');
+      const textColor = isDark ? '#94a3b8' : '#64748b';
+      const gridColor = isDark ? '#334155' : '#e2e8f0';
+
+      // 1. Category Chart
+      const categoryCounts = {};
+      appState.inventory.forEach(item => {
+        categoryCounts[item.category] = (categoryCounts[item.category] || 0) + (item.orderedQty || 0);
+      });
+
+      const catCtx = document.getElementById('chart-categories');
+      if (catCtx) {
+        if (categoryChart) categoryChart.destroy();
+        categoryChart = new Chart(catCtx, {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(categoryCounts),
+            datasets: [{
+              data: Object.values(categoryCounts),
+              backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#ec4899', '#8b5cf6'],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: { color: textColor, font: { size: 11, family: 'Plus Jakarta Sans' } }
+              }
+            },
+            cutout: '68%'
+          }
+        });
+      }
+
+      // 2. Fulfillment Chart
+      const fulCtx = document.getElementById('chart-fulfillment');
+      if (fulCtx) {
+        if (fulfillmentChart) fulfillmentChart.destroy();
+        const topSKUs = appState.inventory.slice(0, 5);
+        fulfillmentChart = new Chart(fulCtx, {
+          type: 'bar',
+          data: {
+            labels: topSKUs.map(s => s.name.length > 20 ? s.name.substring(0, 18) + '...' : s.name),
+            datasets: [
+              {
+                label: 'Passed QC',
+                data: topSKUs.map(s => s.qcPassedQty || s.orderedQty),
+                backgroundColor: '#10b981',
+                borderRadius: 6
+              },
+              {
+                label: 'Dispatched',
+                data: topSKUs.map(s => s.dispatchedQty || 0),
+                backgroundColor: '#f59e0b',
+                borderRadius: 6
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { display: false }, ticks: { color: textColor, font: { size: 10 } } },
+              y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 10 } } }
+            },
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: { color: textColor, font: { size: 11, family: 'Plus Jakarta Sans' } }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    // 2. INVENTORY & SIZES RENDER
+    function filterInventoryByCategory(cat) {
+      currentCategoryFilter = cat;
+      document.querySelectorAll('.cat-filter').forEach(btn => {
+        btn.classList.remove('bg-indigo-600', 'text-white');
+        btn.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+      });
+      const activeBtn = document.getElementById(`filter-cat-${cat === 'all' ? 'all' : cat === 'VIP Gifts' ? 'vip' : cat === 'Awards & Prizes' ? 'awards' : cat === 'Merchandise' ? 'merch' : 'kits'}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+        activeBtn.classList.add('bg-indigo-600', 'text-white');
+      }
+      renderInventoryList();
+    }
+
+    function renderInventoryList() {
+      let list = appState.inventory;
+      if (currentCategoryFilter !== 'all') {
+        list = list.filter(item => item.category === currentCategoryFilter);
+      }
+      renderInventoryCards(list);
+    }
+
+    function renderInventoryCards(items) {
+      const container = document.getElementById('inventory-list');
+      if (!container) return;
+      if (items.length === 0) {
+        container.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400 text-xs font-semibold">No inventory items found matching filter.</div>`;
+        return;
+      }
+
+      container.innerHTML = items.map(item => {
+        const remaining = (item.qcPassedQty || item.orderedQty) - (item.dispatchedQty || 0);
+        const isLow = remaining <= (item.minStockAlert || 5);
+        const badgeColor = isLow ? 'bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-300' : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300';
+        
+        let sizesHTML = '';
+        if (item.hasSizes && item.sizes) {
+          sizesHTML = `
+            <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <div class="text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center justify-between">
+                <span>Apparel Size Breakdown:</span>
+                <span class="text-[10px] text-indigo-600 dark:text-indigo-400">In Stock</span>
+              </div>
+              <div class="grid grid-cols-6 gap-1.5 text-center text-[10px]">
+                ${Object.entries(item.sizes).map(([sz, sData]) => `
+                  <div class="p-1 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <div class="font-extrabold text-slate-900 dark:text-white">${sz}</div>
+                    <div class="text-emerald-600 dark:text-emerald-400 font-semibold">${(sData.passed || sData.ordered) - (sData.dispatched || 0)}</div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4">
+            <div>
+              <div class="flex items-start justify-between gap-2 mb-2">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                  ${item.id}
+                </span>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${badgeColor}">
+                  ${isLow ? 'Low Stock' : 'In Stock'}
+                </span>
+              </div>
+              <h4 class="text-sm font-bold text-slate-900 dark:text-white leading-tight">${item.name}</h4>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">${item.description || 'Standard vertical item'}</p>
+            </div>
+
+            <!-- Stats Matrix -->
+            <div class="grid grid-cols-3 gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-850 text-xs text-center border border-slate-100 dark:border-slate-800">
+              <div>
+                <span class="text-[10px] text-slate-400 block uppercase">Ordered</span>
+                <span class="font-bold text-slate-800 dark:text-slate-200">${item.orderedQty}</span>
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 block uppercase">QC Passed</span>
+                <span class="font-bold text-emerald-600 dark:text-emerald-400">${item.qcPassedQty || item.orderedQty}</span>
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 block uppercase">Balance</span>
+                <span class="font-extrabold ${isLow ? 'text-rose-600 dark:text-rose-400' : 'text-indigo-600 dark:text-indigo-400'}">${remaining}</span>
+              </div>
+            </div>
+
+            ${sizesHTML}
+
+            <!-- Footer Info & Actions -->
+            <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+              <div>
+                <span class="text-[10px] text-slate-400 block">Cost (excl. GST)</span>
+                <span class="font-bold text-slate-900 dark:text-white">₹${item.unitCost} <span class="text-[10px] text-slate-400 font-normal">(+${item.gstPercent || 12}%)</span></span>
+              </div>
+
+              <div class="flex items-center gap-1.5">
+                <button onclick="showQRCode('${item.id}', '${item.name}', '${item.storageLocation || 'Main Warehouse'}')" class="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800" title="View Storage QR Code">
+                  <i data-lucide="qr-code" class="w-4 h-4"></i>
+                </button>
+                <button onclick="editItem('${item.id}')" class="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-slate-100 dark:hover:bg-slate-800" title="Edit SKU">
+                  <i data-lucide="edit-3" class="w-4 h-4"></i>
+                </button>
+                <button onclick="deleteItem('${item.id}')" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800" title="Delete SKU">
+                  <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    // 3. VENDORS & QUOTES RENDER
+    function renderVendorsView() {
+      // 1. Quotes Table
+      const quotesTbody = document.getElementById('quotes-table-body');
+      if (quotesTbody) {
+        if (appState.quotations.length === 0) {
+          quotesTbody.innerHTML = `<tr><td colspan="11" class="p-6 text-center text-slate-400 text-xs">No quotations logged yet. Click Log New Quote to add.</td></tr>`;
+        } else {
+          quotesTbody.innerHTML = appState.quotations.map(q => {
+            const total = (q.qty || 1) * (q.unitRate || 0) * (1 + (q.gstPercent || 0)/100);
+            const statusClass = q.status === 'Selected' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300' : q.status === 'Rejected' ? 'bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300';
+            return `
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-850/50">
+                <td class="p-3 font-semibold text-slate-900 dark:text-white">${q.skuName}</td>
+                <td class="p-3 text-slate-600 dark:text-slate-300">${q.vendorName}</td>
+                <td class="p-3 text-right font-bold">₹${q.unitRate.toLocaleString()}</td>
+                <td class="p-3 text-right text-slate-500">${q.gstPercent}%</td>
+                <td class="p-3 text-right font-medium">${q.qty}</td>
+                <td class="p-3 text-right font-bold text-indigo-600 dark:text-indigo-400">₹${Math.round(total).toLocaleString()}</td>
+                <td class="p-3 text-center">${q.leadTimeDays}d</td>
+                <td class="p-3 text-center font-bold text-emerald-600">+${q.bufferDays}d</td>
+                <td class="p-3 text-center">${q.sampleApproved ? '<span class="text-emerald-500">✔ Pass</span>' : '<span class="text-amber-500">⏳ Pending</span>'}</td>
+                <td class="p-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusClass}">${q.status}</span></td>
+                <td class="p-3 text-center">
+                  <button onclick="toggleQuoteStatus('${q.id}')" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">Toggle</button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      // 2. Vendors Grid
+      const vendorsGrid = document.getElementById('vendors-grid');
+      if (vendorsGrid) {
+        vendorsGrid.innerHTML = appState.vendors.map(v => `
+          <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+            <div class="flex items-start justify-between">
+              <div>
+                <h4 class="text-sm font-bold text-slate-900 dark:text-white">${v.name}</h4>
+                <p class="text-xs text-slate-500">${v.city || 'Vendor Location'} | Contact: <strong class="text-slate-700 dark:text-slate-300">${v.contactPerson}</strong></p>
+              </div>
+              <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 font-bold text-xs flex items-center gap-1">
+                ⭐ ${v.rating || 4.8}
+              </span>
+            </div>
+
+            <div class="flex flex-wrap gap-1.5">
+              ${(v.categories || []).map(c => `<span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[10px] font-medium text-slate-600 dark:text-slate-300">${c}</span>`).join('')}
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-slate-100 dark:border-slate-800">
+              <div>
+                <span class="text-[10px] text-slate-400 block">Phone / WhatsApp</span>
+                <a href="tel:${v.phone}" class="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">${v.phone}</a>
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 block">GSTIN</span>
+                <span class="font-mono text-slate-700 dark:text-slate-300 text-[11px]">${v.gstin || 'GST Pending'}</span>
+              </div>
+            </div>
+
+            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-850 text-[11px] text-slate-600 dark:text-slate-400 flex items-center justify-between">
+              <span>Terms: <strong>${v.paymentTerms}</strong></span>
+              <span class="font-bold text-emerald-600">${v.deliveryBufferDays} Days Buffer</span>
+            </div>
+          </div>
+        `).join('');
+      }
+      lucide.createIcons();
+    }
+
+    // 4. INWARDING & QC RENDER
+    function renderQCLogs() {
+      let totalInspected = 0;
+      let totalPassed = 0;
+      let totalFailed = 0;
+
+      const qcTbody = document.getElementById('qc-table-body');
+      if (!qcTbody) return;
+
+      if (appState.qcInspections.length === 0) {
+        qcTbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400 text-xs">No QC inspection records yet. Click New Batch Inspection to log.</td></tr>`;
+      } else {
+        qcTbody.innerHTML = appState.qcInspections.map(qc => {
+          totalInspected += (qc.totalInspected || 0);
+          totalPassed += (qc.passed || 0);
+          totalFailed += (qc.failed || 0);
+
+          return `
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-850/50">
+              <td class="p-3 font-semibold text-slate-900 dark:text-white">${qc.date} <span class="text-[10px] text-slate-400 block">${qc.id}</span></td>
+              <td class="p-3 font-medium text-slate-700 dark:text-slate-300">${qc.skuName}</td>
+              <td class="p-3 text-right font-bold">${qc.totalInspected}</td>
+              <td class="p-3 text-right font-bold text-emerald-600">${qc.passed}</td>
+              <td class="p-3 text-right font-bold ${qc.failed > 0 ? 'text-rose-600' : 'text-slate-400'}">${qc.failed}</td>
+              <td class="p-3 text-slate-600 dark:text-slate-400 max-w-xs truncate" title="${qc.defectReason || 'None'}">${qc.defectReason || '<span class="text-emerald-500 font-semibold">✔ 100% Passed</span>'}</td>
+              <td class="p-3 font-medium text-indigo-600 dark:text-indigo-400">${qc.storageBin || 'Main Warehouse'}</td>
+              <td class="p-3 text-slate-600 dark:text-slate-400">${qc.vendorClaimAction || 'N/A'}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      document.getElementById('qc-total-inspected').innerText = totalInspected.toLocaleString();
+      document.getElementById('qc-total-passed').innerText = totalPassed.toLocaleString();
+      document.getElementById('qc-total-failed').innerText = totalFailed.toLocaleString();
+      lucide.createIcons();
+    }
+
+    // 5. LIVE DISTRIBUTION RENDER
+    function renderDistributionLog() {
+      // 1. Table
+      const dispTbody = document.getElementById('distribution-table-body');
+      if (dispTbody) {
+        if (appState.distributions.length === 0) {
+          dispTbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400 text-xs">No items dispatched yet. Use Quick Issue to dispatch items to attendees.</td></tr>`;
+        } else {
+          dispTbody.innerHTML = appState.distributions.map(d => `
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-850/50">
+              <td class="p-3 text-slate-500 whitespace-nowrap">${d.timestamp}</td>
+              <td class="p-3 font-bold text-slate-900 dark:text-white">${d.recipientName}</td>
+              <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">${d.recipientCategory}</span></td>
+              <td class="p-3 font-medium text-slate-700 dark:text-slate-300">${d.item}</td>
+              <td class="p-3 text-center font-bold">${d.size || 'N/A'}</td>
+              <td class="p-3 text-right font-bold text-emerald-600">${d.quantity}</td>
+              <td class="p-3 text-slate-500">${d.issuer}</td>
+              <td class="p-3 text-slate-500">${d.notes || 'Counter dispatch'}</td>
+              <td class="p-3 text-center"><span class="text-emerald-500 font-bold text-[11px]">✔ Handed Over</span></td>
+            </tr>
+          `).join('');
+        }
+      }
+
+      // 2. Live Balance Summary Sidebar
+      const liveBalContainer = document.getElementById('live-balances-list');
+      if (liveBalContainer) {
+        liveBalContainer.innerHTML = appState.inventory.map(item => {
+          const balance = (item.qcPassedQty || item.orderedQty) - (item.dispatchedQty || 0);
+          const percent = Math.round((balance / (item.qcPassedQty || item.orderedQty)) * 100);
+          return `
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 space-y-1.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-slate-800 dark:text-slate-200 truncate pr-2">${item.name}</span>
+                <span class="font-extrabold text-indigo-600 dark:text-indigo-400">${balance} left</span>
+              </div>
+              <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                <div class="bg-emerald-500 h-full rounded-full" style="width: ${percent}%"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+      lucide.createIcons();
+    }
+
+    // 6. DELIVERABLES RENDER (GM-01 to GM-08)
+    function renderDeliverables() {
+      const container = document.getElementById('deliverables-grid');
+      if (!container) return;
+
+      container.innerHTML = appState.deliverables.map(del => {
+        const isDone = del.status === 'Done';
+        const isBlocked = del.status === 'Blocked';
+        const statusBadge = isDone ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300' : isBlocked ? 'bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-300' : 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300';
+
+        return `
+          <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-lg text-xs font-extrabold bg-slate-900 text-white dark:bg-white dark:text-slate-900">
+                  ${del.id}
+                </span>
+                <h4 class="text-sm font-bold text-slate-900 dark:text-white">${del.name}</h4>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-semibold text-slate-500">Target: <strong class="text-indigo-600 dark:text-indigo-400">${del.targetPhase}</strong></span>
+                <select onchange="updateDeliverableStatus('${del.id}', this.value)" class="text-xs font-bold px-2 py-1 rounded-lg border-none ${statusBadge} focus:ring-2 focus:ring-indigo-500">
+                  <option value="Pending" ${del.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                  <option value="In Progress" ${del.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                  <option value="Review with Leads" ${del.status === 'Review with Leads' ? 'selected' : ''}>Review with Leads</option>
+                  <option value="Blocked" ${del.status === 'Blocked' ? 'selected' : ''}>Blocked</option>
+                  <option value="Done" ${del.status === 'Done' ? 'selected' : ''}>Done ✔</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs p-3 rounded-xl bg-slate-50 dark:bg-slate-850 border border-slate-100 dark:border-slate-800">
+              <div>
+                <span class="text-[10px] text-slate-400 block font-semibold uppercase">Scope / Acceptance Criteria:</span>
+                <span class="text-slate-700 dark:text-slate-300">${del.scope}</span>
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 block font-semibold uppercase">Weekly Evidence:</span>
+                <span class="font-semibold text-emerald-600 dark:text-emerald-400">${del.evidence}</span>
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 block font-semibold uppercase">Primary Owner:</span>
+                <span class="font-medium text-slate-800 dark:text-slate-200">${del.owner}</span>
+              </div>
+            </div>
+
+            <div class="text-xs flex items-center justify-between text-slate-500 dark:text-slate-400">
+              <span>Notes / Update: <em class="text-slate-700 dark:text-slate-300 font-medium">${del.notes || 'No blocker notes.'}</em></span>
+              <button onclick="editDeliverableNotes('${del.id}')" class="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline flex items-center gap-1">
+                <i data-lucide="edit-2" class="w-3 h-3"></i> Edit Notes
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function updateDeliverableStatus(delId, newStatus) {
+      const item = appState.deliverables.find(d => d.id === delId);
+      if (item) {
+        item.status = newStatus;
+        saveState();
+        showToast(`Updated ${delId} status to ${newStatus}`);
+        if (newStatus === 'Done') {
+          confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
+        }
+        renderDeliverables();
+      }
+    }
+
+    function editDeliverableNotes(delId) {
+      const item = appState.deliverables.find(d => d.id === delId);
+      if (!item) return;
+      const notes = prompt(`Update notes/evidence for ${delId} (${item.name}):`, item.notes || '');
+      if (notes !== null) {
+        item.notes = notes;
+        saveState();
+        showToast(`Notes updated for ${delId}`);
+        renderDeliverables();
+      }
+    }
+
+    // 7. MEETING BRIEFING RENDER
+    function renderBriefing() {
+      let totalCommitted = 0;
+      let totalSavings = 0;
+      appState.inventory.forEach(item => {
+        const cost = (item.orderedQty || 0) * (item.unitCost || 0);
+        const target = (item.orderedQty || 0) * (item.targetPrice || item.unitCost);
+        totalCommitted += cost;
+        if (target > cost) totalSavings += (target - cost);
+      });
+      const poEl = document.getElementById('briefing-po-val');
+      const savEl = document.getElementById('briefing-savings-val');
+      if (poEl) poEl.innerText = `₹${totalCommitted.toLocaleString()}`;
+      if (savEl) savEl.innerText = `₹${totalSavings.toLocaleString()}`;
+    }
+
+    function copyBriefingText() {
+      const text = `*TiE Yugaantar '26 | Gifts, Awards & Merchandise Weekly Briefing*\n\n` +
+        `*1. Key Decisions Required:*\n` +
+        `• VIP Gift Sample Sign-off with Ashish Jain (Marwar Crafts ₹1,650 box)\n` +
+        `• Vector logo proof sign-off from Nitesh Mathur for apparel\n` +
+        `• Final presentation sequence verification for 15 category trophies\n\n` +
+        `*2. Operational Position:*\n` +
+        `• Total Committed: ₹3,88,500 across 6 SKUs\n` +
+        `• Negotiated Savings: ₹61,500 (13.6%)\n` +
+        `• QC Pass Rate: 98.6% (all suppliers meet 7+ days safety buffer)\n\n` +
+        `_Report compiled by Vikas Jeerawala (Procurement & Vendor Lead)_`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Briefing copied to clipboard for WhatsApp/Email!');
+      });
+    }
+
+    // 8. DROPDOWN POPULATOR
+    function populateDropdowns() {
+      // 1. Dispatch SKU Select
+      const dispSkuSelect = document.getElementById('disp-sku');
+      if (dispSkuSelect) {
+        dispSkuSelect.innerHTML = appState.inventory.map(i => {
+          const bal = (i.qcPassedQty || i.orderedQty) - (i.dispatchedQty || 0);
+          return `<option value="${i.id}">${i.name} (${bal} left)</option>`;
+        }).join('');
+        handleDispSKUChange();
+      }
+
+      // 2. Quote SKU & Vendor Select
+      const quoteSku = document.getElementById('quote-sku');
+      if (quoteSku) {
+        quoteSku.innerHTML = appState.inventory.map(i => `<option value="${i.id}">${i.name}</option>`).join('');
+      }
+
+      const quoteVend = document.getElementById('quote-vendor');
+      if (quoteVend) {
+        quoteVend.innerHTML = appState.vendors.map(v => `<option value="${v.id}">${v.name}</option>`).join('');
+      }
+
+      // 3. QC SKU Select
+      const qcSku = document.getElementById('qc-sku');
+      if (qcSku) {
+        qcSku.innerHTML = appState.inventory.map(i => `<option value="${i.id}">${i.name} (Ordered: ${i.orderedQty})</option>`).join('');
+      }
+    }
+
+    function handleDispSKUChange() {
+      const skuId = document.getElementById('disp-sku').value;
+      const item = appState.inventory.find(i => i.id === skuId);
+      const sizeContainer = document.getElementById('disp-size-container');
+      if (item && item.hasSizes) {
+        sizeContainer.classList.remove('hidden');
+      } else {
+        sizeContainer.classList.add('hidden');
+      }
+    }
+
+    // 9. EVENT HANDLERS & CRUD
+    function handleIssueItem(e) {
+      e.preventDefault();
+      const recipient = document.getElementById('disp-recipient').value.trim();
+      const category = document.getElementById('disp-category').value;
+      const skuId = document.getElementById('disp-sku').value;
+      const qty = parseInt(document.getElementById('disp-qty').value) || 1;
+      const notes = document.getElementById('disp-notes').value.trim();
+      const item = appState.inventory.find(i => i.id === skuId);
+
+      if (!item) return;
+
+      const remaining = (item.qcPassedQty || item.orderedQty) - (item.dispatchedQty || 0);
+      if (qty > remaining) {
+        showToast(`Cannot issue ${qty} units. Only ${remaining} available in stock!`, 'error');
+        return;
+      }
+
+      let sizeVal = 'N/A';
+      if (item.hasSizes && item.sizes) {
+        sizeVal = document.getElementById('disp-size').value;
+        if (item.sizes[sizeVal]) {
+          item.sizes[sizeVal].dispatched = (item.sizes[sizeVal].dispatched || 0) + qty;
+        }
+      }
+
+      item.dispatchedQty = (item.dispatchedQty || 0) + qty;
+
+      const newDisp = {
+        id: `DISP-${Date.now().toString().slice(-4)}`,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        recipientName: recipient,
+        recipientCategory: category,
+        item: item.name,
+        skuId: item.id,
+        quantity: qty,
+        size: sizeVal,
+        issuer: 'Vikas Jeerawala',
+        signature: 'Verified',
+        notes: notes || 'Live counter issue'
+      };
+
+      appState.distributions.unshift(newDisp);
+      saveState();
+      showToast(`Issued ${qty}x ${item.name} to ${recipient}!`);
+      confetti({ particleCount: 50, spread: 50, origin: { y: 0.8 } });
+
+      document.getElementById('disp-recipient').value = '';
+      document.getElementById('disp-notes').value = '';
+      renderAll();
+    }
+
+    // SKU Modal Handling
+    function openItemModal() {
+      document.getElementById('item-form').reset();
+      document.getElementById('item-id').value = '';
+      document.getElementById('item-modal-title').innerText = 'Add New Inventory SKU';
+      document.getElementById('item-sku-code').value = `SKU-GM-0${appState.inventory.length + 1}`;
+      document.getElementById('item-modal').classList.remove('hidden');
+      document.getElementById('item-modal').classList.add('flex');
+    }
+
+    function closeItemModal() {
+      document.getElementById('item-modal').classList.add('hidden');
+      document.getElementById('item-modal').classList.remove('flex');
+    }
+
+    function editItem(skuId) {
+      const item = appState.inventory.find(i => i.id === skuId);
+      if (!item) return;
+      document.getElementById('item-id').value = item.id;
+      document.getElementById('item-name').value = item.name;
+      document.getElementById('item-category').value = item.category;
+      document.getElementById('item-sku-code').value = item.id;
+      document.getElementById('item-target-price').value = item.targetPrice || item.unitCost;
+      document.getElementById('item-unit-cost').value = item.unitCost;
+      document.getElementById('item-gst').value = item.gstPercent || 12;
+      document.getElementById('item-ordered-qty').value = item.orderedQty;
+      document.getElementById('item-min-stock').value = item.minStockAlert || 10;
+      document.getElementById('item-location').value = item.storageLocation || '';
+      document.getElementById('item-description').value = item.description || '';
+      document.getElementById('item-modal-title').innerText = `Edit SKU: ${item.id}`;
+      document.getElementById('item-modal').classList.remove('hidden');
+      document.getElementById('item-modal').classList.add('flex');
+    }
+
+    function deleteItem(skuId) {
+      if (confirm(`Are you sure you want to delete SKU ${skuId}?`)) {
+        appState.inventory = appState.inventory.filter(i => i.id !== skuId);
+        saveState();
+        showToast(`SKU ${skuId} deleted`);
+        renderAll();
+      }
+    }
+
+    function handleSaveItem(e) {
+      e.preventDefault();
+      const existingId = document.getElementById('item-id').value;
+      const skuCode = document.getElementById('item-sku-code').value.trim();
+      const name = document.getElementById('item-name').value.trim();
+      const category = document.getElementById('item-category').value;
+      const targetPrice = parseFloat(document.getElementById('item-target-price').value) || 0;
+      const unitCost = parseFloat(document.getElementById('item-unit-cost').value) || 0;
+      const gstPercent = parseFloat(document.getElementById('item-gst').value) || 12;
+      const orderedQty = parseInt(document.getElementById('item-ordered-qty').value) || 1;
+      const minStock = parseInt(document.getElementById('item-min-stock').value) || 5;
+      const location = document.getElementById('item-location').value.trim();
+      const desc = document.getElementById('item-description').value.trim();
+
+      if (existingId) {
+        const item = appState.inventory.find(i => i.id === existingId);
+        if (item) {
+          item.name = name;
+          item.category = category;
+          item.targetPrice = targetPrice;
+          item.unitCost = unitCost;
+          item.gstPercent = gstPercent;
+          item.orderedQty = orderedQty;
+          item.minStockAlert = minStock;
+          item.storageLocation = location;
+          item.description = desc;
+        }
+      } else {
+        const newItem = {
+          id: skuCode,
+          name: name,
+          category: category,
+          targetPrice: targetPrice,
+          unitCost: unitCost,
+          gstPercent: gstPercent,
+          orderedQty: orderedQty,
+          receivedQty: orderedQty,
+          qcPassedQty: orderedQty,
+          qcFailedQty: 0,
+          dispatchedQty: 0,
+          storageLocation: location || 'Main Warehouse',
+          minStockAlert: minStock,
+          hasSizes: category === 'Merchandise',
+          description: desc
+        };
+        appState.inventory.push(newItem);
+      }
+
+      saveState();
+      closeItemModal();
+      showToast('Inventory SKU saved successfully!');
+      renderAll();
+    }
+
+    // Vendor Modal
+    function openVendorModal() {
+      document.getElementById('vendor-form').reset();
+      document.getElementById('vendor-modal').classList.remove('hidden');
+      document.getElementById('vendor-modal').classList.add('flex');
+    }
+    function closeVendorModal() {
+      document.getElementById('vendor-modal').classList.add('hidden');
+      document.getElementById('vendor-modal').classList.remove('flex');
+    }
+    function handleSaveVendor(e) {
+      e.preventDefault();
+      const newVend = {
+        id: `VEND-0${appState.vendors.length + 1}`,
+        name: document.getElementById('vend-name').value.trim(),
+        contactPerson: document.getElementById('vend-contact').value.trim(),
+        phone: document.getElementById('vend-phone').value.trim(),
+        email: document.getElementById('vend-email').value.trim(),
+        city: document.getElementById('vend-city').value.trim(),
+        gstin: document.getElementById('vend-gstin').value.trim(),
+        paymentTerms: document.getElementById('vend-terms').value.trim() || 'Standard payment terms',
+        deliveryBufferDays: parseInt(document.getElementById('vend-buffer').value) || 7,
+        categories: ['General Merchandise'],
+        rating: 4.8
+      };
+      appState.vendors.push(newVend);
+      saveState();
+      closeVendorModal();
+      showToast('New supplier added to directory!');
+      renderAll();
+    }
+
+    // Quote Modal
+    function openQuoteModal() {
+      document.getElementById('quote-form').reset();
+      populateDropdowns();
+      document.getElementById('quote-modal').classList.remove('hidden');
+      document.getElementById('quote-modal').classList.add('flex');
+    }
+    function closeQuoteModal() {
+      document.getElementById('quote-modal').classList.add('hidden');
+      document.getElementById('quote-modal').classList.remove('flex');
+    }
+    function handleSaveQuote(e) {
+      e.preventDefault();
+      const skuId = document.getElementById('quote-sku').value;
+      const vendId = document.getElementById('quote-vendor').value;
+      const sku = appState.inventory.find(i => i.id === skuId);
+      const vend = appState.vendors.find(v => v.id === vendId);
+
+      const newQuote = {
+        id: `QUOTE-0${appState.quotations.length + 1}`,
+        skuId: skuId,
+        skuName: sku ? sku.name : 'Selected SKU',
+        vendorId: vendId,
+        vendorName: vend ? vend.name : 'Supplier',
+        unitRate: parseFloat(document.getElementById('quote-rate').value) || 0,
+        gstPercent: parseFloat(document.getElementById('quote-gst').value) || 12,
+        qty: sku ? sku.orderedQty : 100,
+        leadTimeDays: parseInt(document.getElementById('quote-lead-time').value) || 14,
+        bufferDays: parseInt(document.getElementById('quote-buffer').value) || 7,
+        status: document.getElementById('quote-status').value,
+        notes: document.getElementById('quote-notes').value.trim() || 'Negotiated quotation',
+        sampleApproved: true
+      };
+      appState.quotations.push(newQuote);
+      saveState();
+      closeQuoteModal();
+      showToast('Quotation logged successfully!');
+      renderAll();
+    }
+
+    function toggleQuoteStatus(quoteId) {
+      const q = appState.quotations.find(item => item.id === quoteId);
+      if (q) {
+        q.status = q.status === 'Selected' ? 'Under Review' : 'Selected';
+        saveState();
+        showToast(`Quotation status updated to ${q.status}`);
+        renderVendorsView();
+      }
+    }
+
+    // QC Modal
+    function openQCModal() {
+      document.getElementById('qc-form').reset();
+      populateDropdowns();
+      document.getElementById('qc-modal').classList.remove('hidden');
+      document.getElementById('qc-modal').classList.add('flex');
+    }
+    function closeQCModal() {
+      document.getElementById('qc-modal').classList.add('hidden');
+      document.getElementById('qc-modal').classList.remove('flex');
+    }
+    function calculateQCPassed() {
+      const insp = parseInt(document.getElementById('qc-inspected').value) || 0;
+      const failed = parseInt(document.getElementById('qc-failed').value) || 0;
+      document.getElementById('qc-passed').value = Math.max(0, insp - failed);
+    }
+    function calculateQCFailed() {
+      const insp = parseInt(document.getElementById('qc-inspected').value) || 0;
+      const passed = parseInt(document.getElementById('qc-passed').value) || 0;
+      document.getElementById('qc-failed').value = Math.max(0, insp - passed);
+    }
+    function handleSaveQC(e) {
+      e.preventDefault();
+      const skuId = document.getElementById('qc-sku').value;
+      const sku = appState.inventory.find(i => i.id === skuId);
+      const inspected = parseInt(document.getElementById('qc-inspected').value) || 0;
+      const passed = parseInt(document.getElementById('qc-passed').value) || 0;
+      const failed = parseInt(document.getElementById('qc-failed').value) || 0;
+      const bin = document.getElementById('qc-storage-bin').value.trim();
+      const defects = document.getElementById('qc-defects').value.trim();
+      const vendorAction = document.getElementById('qc-vendor-action').value.trim();
+
+      if (sku) {
+        sku.receivedQty = inspected;
+        sku.qcPassedQty = passed;
+        sku.qcFailedQty = failed;
+        if (bin) sku.storageLocation = bin;
+      }
+
+      const newQC = {
+        id: `QC-0${appState.qcInspections.length + 1}`,
+        date: new Date().toISOString().split('T')[0],
+        skuId: skuId,
+        skuName: sku ? sku.name : 'Inspected SKU',
+        totalInspected: inspected,
+        passed: passed,
+        failed: failed,
+        defectReason: defects,
+        vendorClaimAction: vendorAction,
+        inspector: 'Vikas Jeerawala',
+        storageBin: bin || 'Main Warehouse'
+      };
+
+      appState.qcInspections.unshift(newQC);
+      saveState();
+      closeQCModal();
+      showToast('Batch QC inspection recorded!');
+      renderAll();
+    }
+
+    // QR Code Modal
+    function showQRCode(skuId, skuName, location) {
+      document.getElementById('qr-modal-title').innerText = `${skuId} - Storage Label`;
+      document.getElementById('qr-modal-sub').innerText = `${skuName} | Storage: ${location}`;
+      const target = document.getElementById('qrcode-target');
+      target.innerHTML = '';
+      new QRCode(target, {
+        text: `TIE-YUGAANTAR-${skuId}-${location}`,
+        width: 140,
+        height: 140
+      });
+      document.getElementById('qr-modal').classList.remove('hidden');
+      document.getElementById('qr-modal').classList.add('flex');
+    }
+    function closeQRModal() {
+      document.getElementById('qr-modal').classList.add('hidden');
+      document.getElementById('qr-modal').classList.remove('flex');
+    }
+
+    function openQuickDispatchModal() {
+      switchTab('distribution');
+      document.getElementById('disp-recipient').focus();
+    }
+
+    // 10. EXPORT & BACKUP UTILITIES
+    function exportFullBackupJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `vikas_tie_inventory_backup_${new Date().toISOString().split('T')[0]}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('Full JSON backup downloaded!');
+    }
+
+    function exportInventoryCSV() {
+      let csv = 'SKU Code,Item Name,Category,Unit Cost,GST %,Ordered Qty,QC Passed,Dispatched,Remaining Stock,Location\n';
+      appState.inventory.forEach(i => {
+        const rem = (i.qcPassedQty || i.orderedQty) - (i.dispatchedQty || 0);
+        csv += `"${i.id}","${i.name}","${i.category}",${i.unitCost},${i.gstPercent || 12},${i.orderedQty},${i.qcPassedQty || i.orderedQty},${i.dispatchedQty || 0},${rem},"${i.storageLocation || ''}"\n`;
+      });
+      downloadCSVFile(csv, 'tie_inventory_master.csv');
+    }
+
+    function exportDistributionCSV() {
+      let csv = 'ID,Timestamp,Recipient Name,Category,Item Issued,Size,Quantity,Issuer,Notes\n';
+      appState.distributions.forEach(d => {
+        csv += `"${d.id}","${d.timestamp}","${d.recipientName}","${d.recipientCategory}","${d.item}","${d.size || 'N/A'}",${d.quantity},"${d.issuer}","${d.notes || ''}"\n`;
+      });
+      downloadCSVFile(csv, 'tie_event_distribution_log.csv');
+    }
+
+    function downloadCSVFile(content, fileName) {
+      const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      showToast(`Exported ${fileName}`);
+    }
+
+    function handleImportJSON(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        try {
+          const imported = JSON.parse(event.target.result);
+          if (imported.inventory && imported.deliverables) {
+            appState = imported;
+            saveState();
+            showToast('Database successfully restored from JSON!');
+            renderAll();
+          } else {
+            showToast('Invalid backup file format.', 'error');
+          }
+        } catch(err) {
+          showToast('Error parsing JSON backup file.', 'error');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    async function resetToDefaultData() {
+      if (confirm('Reset all data to default TiE Yugaantar vertical charter sample data?')) {
+        localStorage.removeItem(STORAGE_KEY);
+        appState = null;
+        await initApp();
+        showToast('Reset to default charter data!');
+      }
+    }
+
+    // Startup
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
