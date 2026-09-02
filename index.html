@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vikas's Inventory & Distribution Suite | Dashboard</title>
+  <title>Vikas's Inventory & Procurement Suite | Dashboard</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -53,7 +53,7 @@
       background: rgba(100, 116, 139, 0.3);
       border-radius: 4px;
     }
-    /* Hide up/down spinner arrows */
+    /* Hide up/down spinner arrows for smooth typing */
     input[type=number]::-webkit-inner-spin-button, 
     input[type=number]::-webkit-outer-spin-button { 
       -webkit-appearance: none; 
@@ -71,7 +71,7 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-full flex flex-col font-sans antialiased selection:bg-indigo-500 selection:text-white">
 
-  <!-- Toast Notification -->
+  <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <!-- Top Header Bar -->
@@ -88,7 +88,7 @@
             <div class="flex items-center gap-2">
               <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white">Dashboard</h1>
               <span class="px-2 py-0.5 text-[11px] font-extrabold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                v2.9 Suppliers Directory Suite
+                v3.0 All Tabs Live
               </span>
             </div>
             <p class="text-xs text-slate-400">Vikas Jeerawala • Procurement, Vendor & Distribution Suite</p>
@@ -114,7 +114,7 @@
 
       </div>
 
-      <!-- Main Navigation Menu -->
+      <!-- Main Navigation Menu (6 Tabs) -->
       <nav class="flex space-x-1 overflow-x-auto py-2.5 custom-scroll text-xs font-semibold border-t border-slate-800/80">
         <button onclick="switchTab('overview')" id="nav-overview" class="nav-tab active-nav px-3.5 py-2 rounded-xl flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap transition-all">
           <i data-lucide="layout-grid" class="w-4 h-4"></i> 1. Overview
@@ -134,12 +134,11 @@
         <button onclick="switchTab('vendors')" id="nav-vendors" class="nav-tab px-3.5 py-2 rounded-xl flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap transition-all">
           <i data-lucide="store" class="w-4 h-4"></i> 6. Suppliers Directory
         </button>
-        
       </nav>
     </div>
   </header>
 
-  <!-- Main Container -->
+  <!-- Main Content Area -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
     <!-- ========================================================================= -->
@@ -185,7 +184,7 @@
           </div>
           <div class="flex items-baseline gap-2">
             <span id="stat-available" class="text-3xl font-extrabold text-emerald-400">0</span>
-            <span class="text-xs text-slate-400">/ <span id="stat-dispatched">0</span> given</span>
+            <span class="text-xs text-slate-400">/ <span id="stat-dispatched">0</span> handed out</span>
           </div>
           <p class="text-xs text-emerald-400 font-semibold flex items-center gap-1">
             <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> <span id="stat-qc-pass">0%</span> QC Passed
@@ -202,7 +201,7 @@
             <span id="stat-total-cost" class="text-3xl font-extrabold text-emerald-400">₹0</span>
           </div>
           <p class="text-xs text-slate-400 font-semibold">
-            Savings: <strong class="text-emerald-400" id="stat-savings">₹0</strong>
+            Negotiated Savings: <strong class="text-emerald-400" id="stat-savings">₹0</strong>
           </p>
         </div>
       </div>
@@ -248,7 +247,7 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- TAB 2: ORDERS & IN-TRANSIT PIPELINE (NEW DEDICATED TAB) -->
+    <!-- TAB 2: ORDERS & IN-TRANSIT -->
     <!-- ========================================================================= -->
     <div id="tab-orders" class="tab-section hidden space-y-6">
       
@@ -295,7 +294,7 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- TAB 3: GIFTS & MERCH ITEMS (INVENTORY) -->
+    <!-- TAB 3: GIFTS & MERCH ITEMS -->
     <!-- ========================================================================= -->
     <div id="tab-items" class="tab-section hidden space-y-6">
       
@@ -379,6 +378,7 @@
               <div id="handover-size-box" class="hidden">
                 <label class="block font-semibold text-slate-300 mb-1">Apparel Size *</label>
                 <select id="handover-size-select" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-emerald-500">
+                  <option value="XS">XS</option>
                   <option value="S">S</option>
                   <option value="M" selected>M</option>
                   <option value="L">L</option>
@@ -494,7 +494,7 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- TAB 6: SUPPLIERS & QUOTES -->
+    <!-- TAB 6: SUPPLIERS DIRECTORY -->
     <!-- ========================================================================= -->
     <div id="tab-vendors" class="tab-section hidden space-y-6">
       
@@ -503,46 +503,17 @@
           <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
             Deliverable GM-05
           </span>
-          <h2 class="text-lg font-extrabold text-white mt-2">Suppliers & Rate Comparison</h2>
-          <p class="text-xs text-slate-400 mt-0.5">Vikas's quotation directory, contact numbers, and negotiated prices.</p>
+          <h2 class="text-lg font-extrabold text-white mt-2">Suppliers Directory</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Vikas's vendor contact directory, cities, phone numbers, and delivery safety buffers.</p>
         </div>
-        <div class="flex items-center gap-2">
-          <button onclick="openVendorModal()" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1.5 shadow-sm active:scale-95 transition-all">
-            <i data-lucide="user-plus" class="w-4 h-4"></i> Add Supplier
-          </button>
-          
-        </div>
+        <button onclick="openVendorModal()" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1.5 shadow-sm active:scale-95 transition-all">
+          <i data-lucide="user-plus" class="w-4 h-4"></i> Add Supplier
+        </button>
       </div>
 
-      <!-- Supplier Directory Cards -->
+      <!-- Supplier Directory Cards Grid -->
       <div id="vendors-card-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <!-- Rendered Dynamically -->
-      </div>
-
-      
-
-    </div>
-
-    
-        </div>
-
-        <!-- Section 2 -->
-        <div class="space-y-2 text-xs">
-          <h3 class="font-bold text-rose-400 uppercase tracking-wider">2. Key Decisions Needed from Ashish Jain / Leads</h3>
-          <ul class="list-disc list-inside space-y-1.5 p-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-300" id="briefing-decisions-list">
-            <li>Confirm sample sign-off for Jodhpur Handcrafted Brass Box (Marwar Crafts ₹1,650).</li>
-            <li>Verify presentation sequence for 15 Category Trophies & 45 Certificates.</li>
-            <li>Receive finalized vector artwork lockup from Nitesh Mathur for apparel.</li>
-          </ul>
-        </div>
-
-        <!-- Section 3 -->
-        <div class="space-y-2 text-xs">
-          <h3 class="font-bold text-amber-400 uppercase tracking-wider">3. Quality & Delivery Buffers</h3>
-          <p id="briefing-qc-note" class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-300">
-            All selected suppliers provide a safety buffer of 7–10 days before event dates.
-          </p>
-        </div>
       </div>
 
     </div>
@@ -553,7 +524,7 @@
   <!-- MODALS -->
   <!-- ========================================================================= -->
 
-  <!-- Modal 1: Add New Item / Place Order (With Supplier & PO Details) -->
+  <!-- Modal 1: Add New Item / Place Order (With Supplier, Sizes & Budget) -->
   <div id="modal-item" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-slate-850 rounded-2xl max-w-lg w-full p-6 border border-slate-700 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scroll">
       <div class="flex items-center justify-between border-b border-slate-700 pb-3">
@@ -584,46 +555,15 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-3">
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">Total Ordered Qty *</label>
-            <input type="text" id="form-item-qty" required placeholder="e.g. 200" onfocus="this.select()" oninput="handleOrderedQtyInput(this.value)" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500 font-bold" />
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">Negotiated Price (₹) *</label>
-            <input type="text" id="form-item-cost" required placeholder="e.g. 120" onfocus="this.select()" oninput="updateItemSavingsPreview()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500 font-bold" />
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">Target Budget (₹)</label>
-            <input type="text" id="form-item-target" placeholder="e.g. 150 (Cap)" onfocus="this.select()" oninput="updateItemSavingsPreview()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500 font-bold" />
-          </div>
-        </div>
-        <div id="item-savings-preview-bar" class="p-2 rounded-xl bg-slate-900 border border-slate-750 text-xs text-slate-400 flex items-center justify-between">
-          <span>Target Budget Benchmark:</span>
-          <span id="item-savings-preview-text" class="font-bold text-emerald-400">₹0 Savings</span>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">Expected Delivery Date</label>
-            <input type="date" id="form-item-date" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500" />
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">Storage Room / Rack</label>
-            <input type="text" id="form-item-loc" placeholder="e.g. Backstage Storage - Box 2" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500" />
-          </div>
-        </div>
-
-        
-        <!-- NEW: Apparel Size Breakdown Box (Always Responsive with Presets) -->
+        <!-- Apparel Size Breakdown Box (Active for Merchandise) -->
         <div id="form-size-breakdown-box" class="p-3.5 rounded-xl bg-slate-900 border border-slate-750 space-y-2.5">
           <div class="flex items-center justify-between">
             <label class="font-bold text-indigo-300 flex items-center gap-1.5 text-xs">
               <i data-lucide="shirt" class="w-4 h-4"></i> Enter Exact Sizes (XS to 2XL):
             </label>
             <div class="flex items-center gap-1.5">
-              <button type="button" onclick="applySizePreset(100)" class="px-2 py-0.5 rounded bg-slate-850 hover:bg-slate-800 text-[10px] font-bold text-slate-300 border border-slate-700">100 Mix</button>
-              <button type="button" onclick="applySizePreset(200)" class="px-2 py-0.5 rounded bg-slate-850 hover:bg-slate-800 text-[10px] font-bold text-slate-300 border border-slate-700">200 Mix</button>
+              <button type="button" onclick="applySizePreset(100)" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-750 text-[10px] font-bold text-slate-300 border border-slate-700">100 Mix</button>
+              <button type="button" onclick="applySizePreset(200)" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-750 text-[10px] font-bold text-slate-300 border border-slate-700">200 Mix</button>
               <span class="text-[11px] text-slate-400 ml-1">Sum: <strong class="text-emerald-400" id="sizes-total-badge">0</strong></span>
             </div>
           </div>
@@ -653,9 +593,38 @@
               <input type="text" id="form-size-2xl" placeholder="0" onfocus="this.select()" oninput="handleSizeInputChanged()" class="w-full p-2 text-center rounded-lg bg-slate-800 border border-slate-700 text-white font-bold" />
             </div>
           </div>
-          <p class="text-[10px] text-slate-400">Type numbers in any box above (or click 100/200 mix). Total Qty will update automatically.</p>
+          <p class="text-[10px] text-slate-400">Type numbers in any box above. Total Qty will update automatically.</p>
         </div>
-          <p class="text-[10px] text-slate-400">Type numbers in any size box above. It automatically sums them into Total Ordered Qty.</p>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Total Ordered Qty *</label>
+            <input type="text" id="form-item-qty" required placeholder="e.g. 200" onfocus="this.select()" oninput="handleOrderedQtyInput(this.value)" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500 font-bold" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Negotiated Price (₹) *</label>
+            <input type="text" id="form-item-cost" required placeholder="e.g. 120" onfocus="this.select()" oninput="updateItemSavingsPreview()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500 font-bold" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Target Budget (₹)</label>
+            <input type="text" id="form-item-target" placeholder="e.g. 150 (Cap)" onfocus="this.select()" oninput="updateItemSavingsPreview()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500 font-bold" />
+          </div>
+        </div>
+
+        <div id="item-savings-preview-bar" class="p-2 rounded-xl bg-slate-900 border border-slate-750 text-xs text-slate-400 flex items-center justify-between">
+          <span>Budget Variance / Savings:</span>
+          <span id="item-savings-preview-text" class="font-bold text-emerald-400">₹0 Savings</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Expected Delivery Date</label>
+            <input type="date" id="form-item-date" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Storage Room / Rack</label>
+            <input type="text" id="form-item-loc" placeholder="e.g. Backstage Storage - Box 2" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500" />
+          </div>
         </div>
 
         <!-- QC Delivery Status -->
@@ -775,17 +744,19 @@
 
   <!-- JavaScript Logic -->
   <script>
-    const STORAGE_KEY = 'VIKAS_INVENTORY_STORE_v3';
+    const STORAGE_KEY = 'VIKAS_INVENTORY_STORE_v4';
     let appState = null;
     let activeCategory = 'all';
 
     async function initApp() {
       let saved = localStorage.getItem(STORAGE_KEY);
       if (!saved) {
-        // Check older version storage keys
+        // Look up previous stores if any
+        const v3 = localStorage.getItem('VIKAS_INVENTORY_STORE_v3');
         const v2 = localStorage.getItem('VIKAS_INVENTORY_STORE_v2');
         const v1 = localStorage.getItem('VIKAS_INVENTORY_STORE_v1');
-        if (v2) saved = v2;
+        if (v3) saved = v3;
+        else if (v2) saved = v2;
         else if (v1) saved = v1;
       }
 
@@ -799,11 +770,10 @@
           appState = await res.json();
           saveState();
         } catch(e) {
-          appState = { inventory: [], deliverables: [], distributions: [], vendors: [], quotations: [], qcInspections: [] };
+          appState = { inventory: [], vendors: [], distributions: [], qcInspections: [] };
         }
       }
 
-      // Ensure suppliers have default links
       if (!appState.vendors || appState.vendors.length === 0) {
         appState.vendors = [
           { id: 'VEND-01', name: 'Marwar Craft & Heritage Emporium', contactPerson: 'Rameshwar Gehlot', phone: '+91 98290 12345', city: 'Jodhpur, Rajasthan', deliveryBufferDays: 8, rating: 4.9 },
@@ -813,7 +783,7 @@
         ];
       }
 
-      if (!appState.quotations) appState.quotations = [];
+      if (!appState.inventory) appState.inventory = [];
       if (!appState.distributions) appState.distributions = [];
       if (!appState.qcInspections) appState.qcInspections = [];
 
@@ -826,7 +796,7 @@
           else i.supplierName = 'PrintMatrix Fine Media';
         }
         if (!i.poNumber) {
-          i.poNumber = `PO-${Math.abs(hashCode(i.id)) % 900 + 100}`;
+          i.poNumber = `PO-${Math.floor(100 + Math.random() * 900)}`;
         }
         if (!i.expectedDeliveryDate) {
           i.expectedDeliveryDate = '2026-09-18';
@@ -836,42 +806,6 @@
       saveState();
       renderAll();
       lucide.createIcons();
-    }
-
-    function hashCode(str) {
-      let hash = 0;
-      for (let i = 0; i < str.length; i++) hash = (hash << 5) - hash + str.charCodeAt(i);
-      return hash;
-    }
-
-    
-    
-    function deleteSupplier(vendId) {
-      const v = appState.vendors.find(x => x.id === vendId);
-      if (!v) return;
-      if (!confirm(`Are you sure you want to delete supplier "${v.name}"?`)) return;
-      appState.vendors = appState.vendors.filter(x => x.id !== vendId);
-      saveState();
-      showToast(`Deleted supplier "${v.name}"`);
-      renderAll();
-    }
-
-    function deleteItem(skuId) {
-      const item = appState.inventory.find(i => i.id === skuId);
-      if (!item) return;
-
-      const confirmDelete = confirm(`Are you sure you want to delete "${item.name}" from your inventory and orders?`);
-      if (!confirmDelete) return;
-
-      // Remove from inventory
-      appState.inventory = appState.inventory.filter(i => i.id !== skuId);
-      // Remove related QC and quotations
-      appState.qcInspections = (appState.qcInspections || []).filter(q => q.skuId !== skuId);
-      appState.quotations = (appState.quotations || []).filter(q => q.skuId !== skuId);
-
-      saveState();
-      showToast(`Deleted "${item.name}" from inventory`);
-      renderAll();
     }
 
     function saveState() {
@@ -908,8 +842,6 @@
       renderDistribution();
       renderQC();
       renderVendors();
-      
-      
       populateDropdowns();
     }
 
@@ -945,20 +877,27 @@
       const passRate = totalOrdered > 0 ? ((totalPassed / totalOrdered) * 100).toFixed(1) : '0.0';
       const available = Math.max(0, totalPassed - totalDisp);
 
-      document.getElementById('stat-total-stock').innerText = totalOrdered.toLocaleString();
-      document.getElementById('stat-sku-count').innerText = `${appState.inventory.length} SKUs`;
-      document.getElementById('stat-pending-delivery').innerText = pendingUnits.toLocaleString();
-      document.getElementById('stat-available').innerText = available.toLocaleString();
-      document.getElementById('stat-dispatched').innerText = `${totalDisp.toLocaleString()} handed out`;
-      document.getElementById('stat-qc-pass').innerText = `${passRate}%`;
-      document.getElementById('stat-total-cost').innerText = `₹${totalCost.toLocaleString()}`;
-      document.getElementById('stat-savings').innerText = `₹${totalSavings.toLocaleString()}`;
-
-      // Badge in nav
+      const stStock = document.getElementById('stat-total-stock');
+      const stSku = document.getElementById('stat-sku-count');
+      const stPend = document.getElementById('stat-pending-delivery');
+      const stAvail = document.getElementById('stat-available');
+      const stDisp = document.getElementById('stat-dispatched');
+      const stPass = document.getElementById('stat-qc-pass');
+      const stCost = document.getElementById('stat-total-cost');
+      const stSav = document.getElementById('stat-savings');
       const navBadge = document.getElementById('nav-pending-badge');
+
+      if (stStock) stStock.innerText = totalOrdered.toLocaleString();
+      if (stSku) stSku.innerText = `${appState.inventory.length} SKUs`;
+      if (stPend) stPend.innerText = pendingUnits.toLocaleString();
+      if (stAvail) stAvail.innerText = available.toLocaleString();
+      if (stDisp) stDisp.innerText = totalDisp.toLocaleString();
+      if (stPass) stPass.innerText = `${passRate}%`;
+      if (stCost) stCost.innerText = `₹${totalCost.toLocaleString()}`;
+      if (stSav) stSav.innerText = `₹${totalSavings.toLocaleString()}`;
       if (navBadge) navBadge.innerText = pendingOrdersCount;
 
-      // Pending alert banner
+      // Pending Alert Banner
       const alertBox = document.getElementById('overview-pending-alert');
       if (alertBox) {
         if (pendingUnits > 0) {
@@ -979,7 +918,7 @@
             </div>
           `;
         } else {
-          alertBox.innerHTML = ``;
+          alertBox.innerHTML = '';
         }
       }
 
@@ -1010,7 +949,9 @@
               <td class="p-3 text-center font-bold text-amber-400">${disp}</td>
               <td class="p-3 text-center font-extrabold ${ready > 0 ? 'text-emerald-400' : 'text-slate-500'}">${ready}</td>
               <td class="p-3 text-right flex items-center justify-end gap-1.5">
-                <button onclick="deleteItem('${item.id}')" title="Delete Item" class="p-1.5 rounded-lg hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 transition-all"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                <button onclick="deleteItem('${item.id}')" title="Delete Item" class="p-1.5 rounded-lg hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 transition-all">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
                 ${isPending 
                   ? `<button onclick="startQCInspectionForItem('${item.id}')" class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-bold text-[11px] transition-all">
                        Receive & Inspect
@@ -1026,7 +967,7 @@
       }
     }
 
-    // 2. ORDERS PIPELINE & IN-TRANSIT (NEW TAB)
+    // 2. ORDERS PIPELINE
     function renderOrdersPipeline() {
       const tb = document.getElementById('orders-pipeline-body');
       if (!tb) return;
@@ -1062,7 +1003,9 @@
               }
             </td>
             <td class="p-3 text-right flex items-center justify-end gap-1.5">
-              <button onclick="deleteItem('${item.id}')" title="Delete Order" class="p-1.5 rounded-lg hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 transition-all"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+              <button onclick="deleteItem('${item.id}')" title="Delete Order" class="p-1.5 rounded-lg hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 transition-all">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
               ${isPending 
                 ? `<button onclick="startQCInspectionForItem('${item.id}')" class="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs flex items-center gap-1 shadow-sm">
                      <i data-lucide="check-square" class="w-3.5 h-3.5"></i> Receive Shipment
@@ -1075,7 +1018,7 @@
       }).join('');
     }
 
-    // 3. ITEMS
+    // 3. ITEMS (INVENTORY)
     function filterCategory(cat) {
       activeCategory = cat;
       document.querySelectorAll('.cat-pill').forEach(b => {
@@ -1123,17 +1066,15 @@
           <div class="bg-slate-850 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-4 hover:border-indigo-500/50 transition-all">
             <div>
               <div class="flex items-center justify-between mb-2">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-300">${item.category}</span>
                 <div class="flex items-center gap-1.5">
-                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-300">${item.category}</span>
-                  </div>
-                  <div class="flex items-center gap-1.5">
-                    <button onclick="deleteItem('${item.id}')" title="Delete Item" class="p-1 rounded-lg hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-all">
-                      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                    </button>
-                  </div>
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isPending ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : ready > 5 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">
-                  ${isPending ? '🚚 In-Transit (Ordered)' : `${ready} Units Ready`}
-                </span>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isPending ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : ready > 5 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">
+                    ${isPending ? '🚚 In-Transit' : `${ready} Ready`}
+                  </span>
+                  <button onclick="deleteItem('${item.id}')" title="Delete Item" class="p-1 rounded-lg hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-all">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
               </div>
               <h4 class="text-sm font-extrabold text-white">${item.name}</h4>
               <p class="text-xs text-slate-400 mt-1">Supplier: <strong class="text-slate-200">${item.supplierName || 'Assigned Supplier'}</strong></p>
@@ -1226,7 +1167,7 @@
       const remaining = Math.max(0, pass - (parseInt(item.dispatchedQty) || 0));
 
       if (pass === 0) {
-        alert(`This item is currently in-transit and has not arrived/passed QC inspection yet! Please receive and inspect it in Tab 5.`);
+        alert(`This item is currently in-transit and has not arrived/passed QC inspection yet! Please receive it in Tab 5 first.`);
         return;
       }
 
@@ -1286,7 +1227,7 @@
       }
     }
 
-    // 5. QC
+    // 5. QC INSPECTION
     function renderQC() {
       const pendingItems = appState.inventory.filter(i => !i.qcPassedQty || i.qcPassedQty === 0);
       const banner = document.getElementById('qc-pending-banner');
@@ -1396,7 +1337,7 @@
         passed: passed,
         failed: defects,
         storageBin: bin || 'Main Warehouse',
-        vendorClaimAction: notes || (defects > 0 ? 'Defects logged for vendor replacement' : '100% Passed inspection')
+        vendorClaimAction: notes || (defects > 0 ? 'Defects recorded' : '100% Passed inspection')
       });
 
       saveState();
@@ -1406,7 +1347,7 @@
       renderAll();
     }
 
-    // 6. VENDORS & QUOTES
+    // 6. SUPPLIERS DIRECTORY
     function renderVendors() {
       const g = document.getElementById('vendors-card-grid');
       if (g) {
@@ -1431,30 +1372,31 @@
           </div>
         `).join('');
       }
+    }
 
-      const qTb = document.getElementById('quotes-history-body');
-      if (qTb) {
-        if (!appState.quotations || appState.quotations.length === 0) {
-          // qTb.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-slate-400">No active quotes logged yet. Click  above.</td></tr>`;
-        } else {
-          // qTb.innerHTML = appState.quotations.map(q => {
-            const tot = (parseInt(q.qty) || 100) * (parseFloat(q.unitRate) || 0) * (1 + (parseFloat(q.gstPercent) || 12)/100);
-            return `
-              <tr class="hover:bg-slate-800/50">
-                <td class="p-3 font-bold text-white">${q.skuName}</td>
-                <td class="p-3 text-slate-300">${q.vendorName}</td>
-                <td class="p-3 text-center font-bold text-indigo-300">${q.qty || 100} units</td>
-                <td class="p-3 text-right font-bold text-white">₹${parseFloat(q.unitRate).toLocaleString()}</td>
-                <td class="p-3 text-right text-slate-400">${q.gstPercent}%</td>
-                <td class="p-3 text-right font-bold text-emerald-400">₹${Math.round(tot).toLocaleString()}</td>
-                <td class="p-3 text-center text-slate-300">${q.leadTimeDays || 14}d</td>
-                <td class="p-3 text-center font-bold text-emerald-400">+${q.bufferDays || 8}d</td>
-                <td class="p-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${q.status === 'Selected' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${q.status}</span></td>
-              </tr>
-            `;
-          }).join('');
-        }
-      }
+    function deleteSupplier(vendId) {
+      const v = appState.vendors.find(x => x.id === vendId);
+      if (!v) return;
+      if (!confirm(`Are you sure you want to delete supplier "${v.name}"?`)) return;
+      appState.vendors = appState.vendors.filter(x => x.id !== vendId);
+      saveState();
+      showToast(`Deleted supplier "${v.name}"`);
+      renderAll();
+    }
+
+    function deleteItem(skuId) {
+      const item = appState.inventory.find(i => i.id === skuId);
+      if (!item) return;
+
+      const confirmDelete = confirm(`Are you sure you want to delete "${item.name}" from your inventory and orders?`);
+      if (!confirmDelete) return;
+
+      appState.inventory = appState.inventory.filter(i => i.id !== skuId);
+      appState.qcInspections = (appState.qcInspections || []).filter(q => q.skuId !== skuId);
+
+      saveState();
+      showToast(`Deleted "${item.name}" from inventory`);
+      renderAll();
     }
 
     function openVendorModal() {
@@ -1504,14 +1446,55 @@
       renderAll();
     }
 
-    
-    function calculateQuoteTotalPreview() {
-      const q = parseFloat((document.getElementById('quote-qty')?.value || '0').replace(/[^0-9.]/g, '')) || 0;
-      const r = parseFloat((document.getElementById('quote-rate')?.value || '0').replace(/[^0-9.]/g, '')) || 0;
-      const gst = parseFloat((document.getElementById('quote-gst')?.value || '12').replace(/[^0-9.]/g, '')) || 12;
-      const total = q * r * (1 + gst / 100);
-      const el = document.getElementById('quote-total-preview');
-      if (el) el.innerText = `₹${Math.round(total).toLocaleString()}`;
+    // Modal Item Helpers
+    function handleCategoryChange(cat) {
+      const sizeBox = document.getElementById('form-size-breakdown-box');
+      if (sizeBox) {
+        if (cat === 'Merchandise') {
+          sizeBox.classList.remove('hidden');
+        } else {
+          sizeBox.classList.add('hidden');
+        }
+      }
+    }
+
+    function applySizePreset(tot) {
+      if (tot === 100) {
+        document.getElementById('form-size-xs').value = '5';
+        document.getElementById('form-size-s').value = '15';
+        document.getElementById('form-size-m').value = '40';
+        document.getElementById('form-size-l').value = '30';
+        document.getElementById('form-size-xl').value = '10';
+        document.getElementById('form-size-2xl').value = '0';
+      } else if (tot === 200) {
+        document.getElementById('form-size-xs').value = '10';
+        document.getElementById('form-size-s').value = '30';
+        document.getElementById('form-size-m').value = '80';
+        document.getElementById('form-size-l').value = '60';
+        document.getElementById('form-size-xl').value = '20';
+        document.getElementById('form-size-2xl').value = '0';
+      }
+      handleSizeInputChanged();
+    }
+
+    function handleSizeInputChanged() {
+      const xs = parseInt((document.getElementById('form-size-xs')?.value || '').replace(/[^0-9]/g, '')) || 0;
+      const s = parseInt((document.getElementById('form-size-s')?.value || '').replace(/[^0-9]/g, '')) || 0;
+      const m = parseInt((document.getElementById('form-size-m')?.value || '').replace(/[^0-9]/g, '')) || 0;
+      const l = parseInt((document.getElementById('form-size-l')?.value || '').replace(/[^0-9]/g, '')) || 0;
+      const xl = parseInt((document.getElementById('form-size-xl')?.value || '').replace(/[^0-9]/g, '')) || 0;
+      const xxl = parseInt((document.getElementById('form-size-2xl')?.value || '').replace(/[^0-9]/g, '')) || 0;
+
+      const sum = xs + s + m + l + xl + xxl;
+      const badge = document.getElementById('sizes-total-badge');
+      if (badge) badge.innerText = sum;
+
+      if (sum > 0) {
+        document.getElementById('form-item-qty').value = sum;
+        const passInput = document.getElementById('form-item-passed');
+        if (passInput) passInput.value = sum;
+      }
+      updateItemSavingsPreview();
     }
 
     function updateItemSavingsPreview() {
@@ -1528,6 +1511,192 @@
           el.innerText = `On Budget (₹0 Variance)`;
         }
       }
+    }
+
+    function handleOrderedQtyInput(val) {
+      const q = parseInt(val) || 0;
+      const passInput = document.getElementById('form-item-passed');
+      if (passInput) passInput.value = q;
+      document.getElementById('form-item-defects').value = 0;
+      updateItemSavingsPreview();
+    }
+
+    function toggleQCInputs(status) {
+      const exp = document.getElementById('form-qc-expanded');
+      const hint = document.getElementById('qc-status-hint');
+      if (status === 'received') {
+        exp.classList.remove('hidden');
+        hint.innerText = 'Specify how many units passed inspection and if any defects were found.';
+        const q = parseInt(document.getElementById('form-item-qty').value) || 100;
+        document.getElementById('form-item-passed').value = q;
+        document.getElementById('form-item-defects').value = 0;
+      } else {
+        exp.classList.add('hidden');
+        hint.innerText = 'Item will appear under "Orders & In-Transit". You can inspect and receive it when the shipment arrives.';
+      }
+    }
+
+    function calculateDefectsFromPassed() {
+      const ord = parseInt(document.getElementById('form-item-qty').value) || 0;
+      const pass = parseInt(document.getElementById('form-item-passed').value) || 0;
+      document.getElementById('form-item-defects').value = Math.max(0, ord - pass);
+    }
+
+    function calculatePassedFromDefects() {
+      const ord = parseInt(document.getElementById('form-item-qty').value) || 0;
+      const defects = parseInt(document.getElementById('form-item-defects').value) || 0;
+      document.getElementById('form-item-passed').value = Math.max(0, ord - defects);
+    }
+
+    function openItemModal() {
+      populateDropdowns();
+      document.getElementById('form-item-id').value = '';
+      document.getElementById('form-item-name').value = '';
+      document.getElementById('form-item-qty').value = '';
+      document.getElementById('form-item-cost').value = '';
+      document.getElementById('form-item-target').value = '';
+      document.getElementById('form-item-date').value = '2026-09-18';
+      document.getElementById('form-item-loc').value = '';
+      document.getElementById('form-item-status').value = 'pending';
+      
+      const szIds = ['form-size-xs', 'form-size-s', 'form-size-m', 'form-size-l', 'form-size-xl', 'form-size-2xl'];
+      szIds.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      const badge = document.getElementById('sizes-total-badge');
+      if (badge) badge.innerText = '0';
+      
+      toggleQCInputs('pending');
+      handleCategoryChange(document.getElementById('form-item-cat') ? document.getElementById('form-item-cat').value : 'VIP Gifts');
+      updateItemSavingsPreview();
+
+      const m = document.getElementById('modal-item');
+      if (m) {
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+      }
+    }
+
+    function closeItemModal() {
+      const m = document.getElementById('modal-item');
+      if (m) {
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+      }
+    }
+
+    function handleSaveItem(e) {
+      e.preventDefault();
+      const name = document.getElementById('form-item-name').value.trim();
+      const cat = document.getElementById('form-item-cat').value;
+      const vendorName = document.getElementById('form-item-vendor').value;
+      const rawQty = (document.getElementById('form-item-qty').value || '').toString().replace(/[^0-9]/g, '');
+      const rawCost = (document.getElementById('form-item-cost').value || '').toString().replace(/[^0-9.]/g, '');
+      const rawTarget = (document.getElementById('form-item-target')?.value || '').toString().replace(/[^0-9.]/g, '');
+      const qty = parseInt(rawQty) || 1;
+      const cost = parseFloat(rawCost) || 0;
+      const targetCost = parseFloat(rawTarget) || cost;
+      const date = document.getElementById('form-item-date').value || '2026-09-18';
+      const loc = document.getElementById('form-item-loc').value.trim();
+      const status = document.getElementById('form-item-status').value;
+
+      let passedQty = 0;
+      let failedQty = 0;
+
+      if (status === 'received') {
+        passedQty = parseInt(document.getElementById('form-item-passed').value) || qty;
+        failedQty = parseInt(document.getElementById('form-item-defects').value) || 0;
+      }
+
+      const newItem = {
+        id: `SKU-${Date.now().toString().slice(-4)}`,
+        poNumber: `PO-${Math.floor(100 + Math.random() * 900)}`,
+        name: name,
+        category: cat,
+        supplierName: vendorName,
+        expectedDeliveryDate: date,
+        orderedQty: qty,
+        receivedQty: status === 'received' ? qty : 0,
+        qcPassedQty: passedQty,
+        qcFailedQty: failedQty,
+        dispatchedQty: 0,
+        unitCost: cost,
+        targetPrice: targetCost,
+        storageLocation: loc || 'Main Warehouse',
+        hasSizes: cat === 'Merchandise'
+      };
+
+      if (cat === 'Merchandise') {
+        const xs = parseInt((document.getElementById('form-size-xs')?.value || '').replace(/[^0-9]/g, '')) || 0;
+        const s = parseInt((document.getElementById('form-size-s')?.value || '').replace(/[^0-9]/g, '')) || 0;
+        const m = parseInt((document.getElementById('form-size-m')?.value || '').replace(/[^0-9]/g, '')) || 0;
+        const l = parseInt((document.getElementById('form-size-l')?.value || '').replace(/[^0-9]/g, '')) || 0;
+        const xl = parseInt((document.getElementById('form-size-xl')?.value || '').replace(/[^0-9]/g, '')) || 0;
+        const xxl = parseInt((document.getElementById('form-size-2xl')?.value || '').replace(/[^0-9]/g, '')) || 0;
+
+        const sumSizes = xs + s + m + l + xl + xxl;
+        if (sumSizes > 0) {
+          const ratio = qty > 0 ? (passedQty / qty) : 1;
+          newItem.sizes = {
+            'XS': { ordered: xs, passed: Math.round(xs * ratio), dispatched: 0 },
+            'S': { ordered: s, passed: Math.round(s * ratio), dispatched: 0 },
+            'M': { ordered: m, passed: Math.round(m * ratio), dispatched: 0 },
+            'L': { ordered: l, passed: Math.round(l * ratio), dispatched: 0 },
+            'XL': { ordered: xl, passed: Math.round(xl * ratio), dispatched: 0 },
+            '2XL': { ordered: xxl, passed: Math.round(xxl * ratio), dispatched: 0 }
+          };
+        } else {
+          newItem.sizes = {
+            'S': { ordered: Math.round(qty * 0.2), passed: Math.round(passedQty * 0.2), dispatched: 0 },
+            'M': { ordered: Math.round(qty * 0.4), passed: Math.round(passedQty * 0.4), dispatched: 0 },
+            'L': { ordered: Math.round(qty * 0.3), passed: Math.round(passedQty * 0.3), dispatched: 0 },
+            'XL': { ordered: Math.round(qty * 0.1), passed: Math.round(passedQty * 0.1), dispatched: 0 }
+          };
+        }
+      }
+
+      appState.inventory.push(newItem);
+
+      if (status === 'received') {
+        appState.qcInspections.unshift({
+          id: `QC-${Date.now().toString().slice(-4)}`,
+          date: new Date().toISOString().split('T')[0],
+          skuId: newItem.id,
+          skuName: name,
+          supplierName: vendorName,
+          totalInspected: qty,
+          passed: passedQty,
+          failed: failedQty,
+          storageBin: loc || 'Main Warehouse',
+          vendorClaimAction: failedQty > 0 ? 'Defects recorded' : '100% Passed'
+        });
+      }
+
+      saveState();
+      closeItemModal();
+      showToast(status === 'received' 
+        ? `Order ${newItem.poNumber} saved & received (${passedQty} units QC passed)!` 
+        : `Order ${newItem.poNumber} placed with ${vendorName} (In-Transit)!`
+      );
+      renderAll();
+    }
+
+    function openQCModal() {
+      populateDropdowns();
+      const m = document.getElementById('modal-qc');
+      if (m) {
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+      }
+    }
+    function closeQCModal() {
+      const m = document.getElementById('modal-qc');
+      if (m) {
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+      }
+    }
+    function openQuickDispatchModal() {
+      switchTab('distribution');
+      document.getElementById('guest-name').focus();
     }
 
     function populateDropdowns() {
@@ -1551,21 +1720,10 @@
         }
       }
 
-      // 3. Supplier dropdown for Item/Order modal
+      // 3. Supplier dropdown for Item modal
       const itemVend = document.getElementById('form-item-vendor');
       if (itemVend) {
         itemVend.innerHTML = appState.vendors.map(v => `<option value="${v.name}">${v.name} (${v.city})</option>`).join('');
-      }
-
-      // 4. Quotations dropdowns
-      const qSkuSel = document.getElementById('quote-sku-select');
-      if (qSkuSel) {
-        qSkuSel.innerHTML = appState.inventory.map(i => `<option value="${i.id}">${i.name}</option>`).join('');
-      }
-
-      const qVendSel = document.getElementById('quote-vendor-select');
-      if (qVendSel) {
-        qVendSel.innerHTML = appState.vendors.map(v => `<option value="${v.id}">${v.name}</option>`).join('');
       }
     }
 
