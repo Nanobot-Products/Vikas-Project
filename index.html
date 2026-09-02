@@ -88,7 +88,7 @@
             <div class="flex items-center gap-2">
               <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white">Dashboard</h1>
               <span class="px-2 py-0.5 text-[11px] font-extrabold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                v2.8 Vendor Quoted Qty & Target Budget
+                v2.9 Suppliers Directory Suite
               </span>
             </div>
             <p class="text-xs text-slate-400">Vikas Jeerawala • Procurement, Vendor & Distribution Suite</p>
@@ -132,7 +132,7 @@
           <i data-lucide="check-circle-2" class="w-4 h-4"></i> 5. Receive & Quality Check
         </button>
         <button onclick="switchTab('vendors')" id="nav-vendors" class="nav-tab px-3.5 py-2 rounded-xl flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800 whitespace-nowrap transition-all">
-          <i data-lucide="store" class="w-4 h-4"></i> 6. Suppliers & Quotes
+          <i data-lucide="store" class="w-4 h-4"></i> 6. Suppliers Directory
         </button>
         
       </nav>
@@ -510,9 +510,7 @@
           <button onclick="openVendorModal()" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1.5 shadow-sm active:scale-95 transition-all">
             <i data-lucide="user-plus" class="w-4 h-4"></i> Add Supplier
           </button>
-          <button onclick="openQuoteModal()" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 flex items-center gap-1.5 shadow-sm active:scale-95 transition-all">
-            <i data-lucide="file-plus" class="w-4 h-4"></i> Log New Quote
-          </button>
+          
         </div>
       </div>
 
@@ -521,32 +519,7 @@
         <!-- Rendered Dynamically -->
       </div>
 
-      <!-- Active Quotations Table -->
-      <div class="bg-slate-850 p-5 rounded-2xl border border-slate-800 space-y-3">
-        <h3 class="text-sm font-bold text-white flex items-center gap-2">
-          <i data-lucide="scale" class="w-4 h-4 text-indigo-400"></i> Active Quotation Comparison Sheet
-        </h3>
-        <div class="overflow-x-auto custom-scroll">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-slate-900 text-slate-400 font-semibold border-b border-slate-800">
-              <tr>
-                <th class="p-3">SKU Item</th>
-                <th class="p-3">Vendor</th>
-                <th class="p-3 text-center">Quoted Qty</th>
-                <th class="p-3 text-right">Quoted Rate</th>
-                <th class="p-3 text-right">GST %</th>
-                <th class="p-3 text-right">Total Amount</th>
-                <th class="p-3 text-center">Lead Time</th>
-                <th class="p-3 text-center">Safety Buffer</th>
-                <th class="p-3 text-center">Status</th>
-              </tr>
-            </thead>
-            <tbody id="quotes-history-body" class="divide-y divide-slate-800 text-slate-200">
-              <!-- Rendered Dynamically -->
-            </tbody>
-          </table>
-        </div>
-      </div>
+      
 
     </div>
 
@@ -800,66 +773,6 @@
     </div>
   </div>
 
-  <!-- Modal 4: Log New Quote Modal -->
-  <div id="modal-quote" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="bg-slate-850 rounded-2xl max-w-md w-full p-6 border border-slate-700 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-        <h3 class="text-sm font-bold text-white">Log Vendor Quotation (GM-05)</h3>
-        <button onclick="closeQuoteModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-      <form onsubmit="handleSaveQuote(event)" class="space-y-3 text-xs">
-        <div>
-          <label class="block font-semibold text-slate-300 mb-1">Select Item *</label>
-          <select id="quote-sku-select" required class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white"></select>
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-300 mb-1">Select Supplier *</label>
-          <select id="quote-vendor-select" required class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white"></select>
-        </div>
-        <div class="grid grid-cols-3 gap-3">
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">Quoted Quantity *</label>
-            <input type="text" id="quote-qty" required placeholder="200" onfocus="this.select()" oninput="calculateQuoteTotalPreview()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold focus:ring-2 focus:ring-emerald-500" />
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">Quoted Rate (₹) *</label>
-            <input type="text" id="quote-rate" required placeholder="540" onfocus="this.select()" oninput="calculateQuoteTotalPreview()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold focus:ring-2 focus:ring-emerald-500" />
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">GST %</label>
-            <input type="text" id="quote-gst" value="12" onfocus="this.select()" oninput="calculateQuoteTotalPreview()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold focus:ring-2 focus:ring-emerald-500" />
-          </div>
-        </div>
-        <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-750 flex items-center justify-between text-xs">
-          <span class="text-slate-400 font-semibold">Total Quote Value (with GST):</span>
-          <span id="quote-total-preview" class="font-extrabold text-emerald-400">₹0</span>
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">Lead Time (Days)</label>
-            <input type="text" id="quote-lead" value="12" onfocus="this.select()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold" />
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">Safety Buffer (Days)</label>
-            <input type="text" id="quote-buffer" value="8" onfocus="this.select()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold" />
-          </div>
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-300 mb-1">Quotation Status</label>
-          <select id="quote-status" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white">
-            <option value="Selected">Selected / Approved</option>
-            <option value="Under Review">Under Review</option>
-            <option value="Rejected">Rejected</option>
-          </select>
-        </div>
-        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-700">
-          <button type="button" onclick="closeQuoteModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold">Cancel</button>
-          <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold">Save Quotation</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
   <!-- JavaScript Logic -->
   <script>
     const STORAGE_KEY = 'VIKAS_INVENTORY_STORE_v3';
@@ -932,6 +845,17 @@
     }
 
     
+    
+    function deleteSupplier(vendId) {
+      const v = appState.vendors.find(x => x.id === vendId);
+      if (!v) return;
+      if (!confirm(`Are you sure you want to delete supplier "${v.name}"?`)) return;
+      appState.vendors = appState.vendors.filter(x => x.id !== vendId);
+      saveState();
+      showToast(`Deleted supplier "${v.name}"`);
+      renderAll();
+    }
+
     function deleteItem(skuId) {
       const item = appState.inventory.find(i => i.id === skuId);
       if (!item) return;
@@ -1487,17 +1411,22 @@
       const g = document.getElementById('vendors-card-grid');
       if (g) {
         g.innerHTML = appState.vendors.map(v => `
-          <div class="bg-slate-850 p-5 rounded-2xl border border-slate-800 space-y-3">
+          <div class="bg-slate-850 p-5 rounded-2xl border border-slate-800 space-y-3 hover:border-slate-700 transition-all">
             <div class="flex items-center justify-between">
               <div>
                 <h4 class="text-sm font-extrabold text-white">${v.name}</h4>
                 <p class="text-xs text-slate-400">Contact: <strong class="text-slate-200">${v.contactPerson}</strong> (${v.city || 'Vendor'})</p>
               </div>
-              <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-xs font-bold">⭐ ${v.rating || 4.8}</span>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-xs font-bold">⭐ ${v.rating || 4.8}</span>
+                <button onclick="deleteSupplier('${v.id}')" title="Delete Supplier" class="p-1 rounded-lg hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 transition-all">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
             </div>
             <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
               <a href="tel:${v.phone}" class="font-bold text-indigo-400 hover:underline">📞 ${v.phone}</a>
-              <span class="text-slate-400">Buffer: <strong class="text-emerald-400">${v.deliveryBufferDays || 7} days</strong></span>
+              <span class="text-slate-400">Safety Buffer: <strong class="text-emerald-400">${v.deliveryBufferDays || 7} days</strong></span>
             </div>
           </div>
         `).join('');
@@ -1506,9 +1435,9 @@
       const qTb = document.getElementById('quotes-history-body');
       if (qTb) {
         if (!appState.quotations || appState.quotations.length === 0) {
-          qTb.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-slate-400">No active quotes logged yet. Click Log New Quote above.</td></tr>`;
+          // qTb.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-slate-400">No active quotes logged yet. Click  above.</td></tr>`;
         } else {
-          qTb.innerHTML = appState.quotations.map(q => {
+          // qTb.innerHTML = appState.quotations.map(q => {
             const tot = (parseInt(q.qty) || 100) * (parseFloat(q.unitRate) || 0) * (1 + (parseFloat(q.gstPercent) || 12)/100);
             return `
               <tr class="hover:bg-slate-800/50">
@@ -1599,413 +1528,6 @@
           el.innerText = `On Budget (₹0 Variance)`;
         }
       }
-    }
-
-    function openQuoteModal() {
-      populateDropdowns();
-      document.getElementById('quote-rate').value = '';
-      const skuSel = document.getElementById('quote-sku-select');
-      if (skuSel && skuSel.value) {
-        const item = appState.inventory.find(i => i.id === skuSel.value);
-        document.getElementById('quote-qty').value = item ? item.orderedQty : '100';
-      } else {
-        document.getElementById('quote-qty').value = '100';
-      }
-      calculateQuoteTotalPreview();
-      
-      const m = document.getElementById('modal-quote');
-      if (m) {
-        m.classList.remove('hidden');
-        m.classList.add('flex');
-      }
-    }
-
-    function closeQuoteModal() {
-      const m = document.getElementById('modal-quote');
-      if (m) {
-        m.classList.add('hidden');
-        m.classList.remove('flex');
-      }
-    }
-
-    function handleSaveQuote(e) {
-      e.preventDefault();
-      const skuId = document.getElementById('quote-sku-select').value;
-      const vendId = document.getElementById('quote-vendor-select').value;
-      const qtyVal = parseInt((document.getElementById('quote-qty').value || '').replace(/[^0-9]/g, '')) || 100;
-      const rate = parseFloat((document.getElementById('quote-rate').value || '').replace(/[^0-9.]/g, '')) || 0;
-      const gst = parseFloat((document.getElementById('quote-gst').value || '12').replace(/[^0-9.]/g, '')) || 12;
-      const lead = parseInt(document.getElementById('quote-lead').value) || 12;
-      const buffer = parseInt(document.getElementById('quote-buffer').value) || 8;
-      const status = document.getElementById('quote-status').value;
-
-      const sku = appState.inventory.find(i => i.id === skuId);
-      const vend = appState.vendors.find(v => v.id === vendId);
-
-      const newQ = {
-        id: `QUOTE-${Date.now().toString().slice(-4)}`,
-        skuId: skuId,
-        skuName: sku ? sku.name : 'Item',
-        vendorId: vendId,
-        vendorName: vend ? vend.name : 'Supplier',
-        unitRate: rate,
-        gstPercent: gst,
-        qty: qtyVal,
-        leadTimeDays: lead,
-        bufferDays: buffer,
-        status: status
-      };
-
-      appState.quotations.unshift(newQ);
-      saveState();
-      closeQuoteModal();
-      showToast(`Quotation of ₹${rate} logged for ${newQ.skuName}!`);
-      renderAll();
-    }
-
-    // 7. DELIVERABLES
-    function renderDeliverables() {
-      const c = document.getElementById('deliverables-list');
-      if (c) {
-        c.innerHTML = appState.deliverables.map(d => `
-          <div class="bg-slate-850 p-4 rounded-xl border border-slate-800 flex items-center justify-between gap-4 text-xs">
-            <div class="space-y-0.5">
-              <div class="flex items-center gap-2">
-                <span class="font-bold text-indigo-400">${d.id}</span>
-                <span class="font-bold text-white">${d.name}</span>
-                <span class="text-[11px] text-slate-400 font-semibold">(${d.targetPhase})</span>
-              </div>
-              <p class="text-slate-400">${d.scope}</p>
-            </div>
-            <select onchange="updateDeliverableStatus('${d.id}', this.value)" class="p-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white font-bold text-xs focus:ring-2 focus:ring-indigo-500">
-              <option value="Pending" ${d.status === 'Pending' ? 'selected' : ''}>Pending</option>
-              <option value="In Progress" ${d.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
-              <option value="Done" ${d.status === 'Done' ? 'selected' : ''}>Done ✔</option>
-            </select>
-          </div>
-        `).join('');
-      }
-    }
-
-    function updateDeliverableStatus(id, st) {
-      const d = appState.deliverables.find(x => x.id === id);
-      if (d) {
-        d.status = st;
-        saveState();
-        showToast(`Updated ${id} to ${st}`);
-        if (st === 'Done') confetti({ particleCount: 50 });
-      }
-    }
-
-    // 8. MEETING BRIEFING (100% REAL-TIME DYNAMIC)
-    function renderBriefing() {
-      let totalUnits = 0;
-      let totalDisp = 0;
-      let totalCost = 0;
-      let totalSavings = 0;
-      let totalPassed = 0;
-      let pendingUnits = 0;
-
-      appState.inventory.forEach(i => {
-        const ord = parseInt(i.orderedQty) || 0;
-        const pass = parseInt(i.qcPassedQty) || 0;
-        const disp = parseInt(i.dispatchedQty) || 0;
-        const cost = parseFloat(i.unitCost) || 0;
-        const target = parseFloat(i.targetPrice) || cost;
-
-        totalUnits += ord;
-        totalPassed += pass;
-        totalDisp += disp;
-        totalCost += (ord * cost);
-        if (target > cost) totalSavings += (ord * (target - cost));
-        if (pass === 0) pendingUnits += ord;
-      });
-
-      const passRate = totalUnits > 0 ? ((totalPassed / totalUnits) * 100).toFixed(1) : '100';
-
-      const bUnits = document.getElementById('briefing-total-units');
-      const bDisp = document.getElementById('briefing-disp-units');
-      const bCost = document.getElementById('briefing-cost-val');
-      const bSav = document.getElementById('briefing-sav-val');
-      const bCount = document.getElementById('briefing-sku-count');
-      const bQC = document.getElementById('briefing-qc-note');
-
-      if (bUnits) bUnits.innerText = `${totalUnits.toLocaleString()} units`;
-      if (bDisp) bDisp.innerText = `${totalDisp.toLocaleString()} units (${totalUnits > 0 ? Math.round((totalDisp/totalUnits)*100) : 0}%)`;
-      if (bCost) bCost.innerText = `₹${totalCost.toLocaleString()}`;
-      if (bSav) bSav.innerText = `₹${totalSavings.toLocaleString()}`;
-      if (bCount) bCount.innerText = `${appState.inventory.length} items tracked (${pendingUnits} pending arrival)`;
-      if (bQC) bQC.innerText = `All ${appState.vendors.length} selected suppliers provide a safety buffer of 7–10 days before event dates. Current warehouse inspection pass rate is ${passRate}% (${totalPassed.toLocaleString()} QC-passed units ready).`;
-    }
-
-    function copyMeetingBriefing() {
-      let totalUnits = 0;
-      let totalDisp = 0;
-      let totalCost = 0;
-      let totalSavings = 0;
-      let totalPassed = 0;
-      let pendingUnits = 0;
-
-      appState.inventory.forEach(i => {
-        const ord = parseInt(i.orderedQty) || 0;
-        const pass = parseInt(i.qcPassedQty) || 0;
-        totalUnits += ord;
-        totalPassed += pass;
-        totalDisp += (parseInt(i.dispatchedQty) || 0);
-        totalCost += (ord * (parseFloat(i.unitCost) || 0));
-        if ((parseFloat(i.targetPrice) || parseFloat(i.unitCost)) > parseFloat(i.unitCost)) {
-          totalSavings += (ord * ((parseFloat(i.targetPrice) || parseFloat(i.unitCost)) - parseFloat(i.unitCost)));
-        }
-        if (pass === 0) pendingUnits += ord;
-      });
-
-      const passRate = totalUnits > 0 ? ((totalPassed / totalUnits) * 100).toFixed(1) : '100';
-
-      const text = `*TiE Yugaantar '26 | Gifts, Awards & Merchandise Summary*\n\n` +
-        `• Total Items Ordered: ${totalUnits.toLocaleString()} units (${appState.inventory.length} SKUs)\n` +
-        `• In-Transit / Pending Delivery: ${pendingUnits.toLocaleString()} units\n` +
-        `• QC Passed in Warehouse: ${totalPassed.toLocaleString()} units (${passRate}%)\n` +
-        `• Handed Out to Guests: ${totalDisp.toLocaleString()} units\n` +
-        `• Total Procurement Budget: ₹${totalCost.toLocaleString()} (Savings: ₹${totalSavings.toLocaleString()})\n\n` +
-        `_Compiled by Vikas Jeerawala (Procurement & Vendor Lead)_`;
-
-      navigator.clipboard.writeText(text).then(() => {
-        showToast('Summary copied to clipboard for WhatsApp!');
-      });
-    }
-
-    // Modal & Add Item Handling
-    
-    function handleCategoryChange(cat) {
-      const sizeBox = document.getElementById('form-size-breakdown-box');
-      if (sizeBox) {
-        if (cat === 'Merchandise') {
-          sizeBox.classList.remove('hidden');
-        } else {
-          sizeBox.classList.add('hidden');
-        }
-      }
-    }
-
-    
-    function applySizePreset(tot) {
-      if (tot === 100) {
-        document.getElementById('form-size-xs').value = '5';
-        document.getElementById('form-size-s').value = '15';
-        document.getElementById('form-size-m').value = '40';
-        document.getElementById('form-size-l').value = '30';
-        document.getElementById('form-size-xl').value = '10';
-        document.getElementById('form-size-2xl').value = '0';
-      } else if (tot === 200) {
-        document.getElementById('form-size-xs').value = '10';
-        document.getElementById('form-size-s').value = '30';
-        document.getElementById('form-size-m').value = '80';
-        document.getElementById('form-size-l').value = '60';
-        document.getElementById('form-size-xl').value = '20';
-        document.getElementById('form-size-2xl').value = '0';
-      }
-      handleSizeInputChanged();
-    }
-
-    function handleSizeInputChanged() {
-      const xs = parseInt(document.getElementById('form-size-xs').value.replace(/[^0-9]/g, '')) || 0;
-      const s = parseInt(document.getElementById('form-size-s').value.replace(/[^0-9]/g, '')) || 0;
-      const m = parseInt(document.getElementById('form-size-m').value.replace(/[^0-9]/g, '')) || 0;
-      const l = parseInt(document.getElementById('form-size-l').value.replace(/[^0-9]/g, '')) || 0;
-      const xl = parseInt(document.getElementById('form-size-xl').value.replace(/[^0-9]/g, '')) || 0;
-      const xxl = parseInt(document.getElementById('form-size-2xl').value.replace(/[^0-9]/g, '')) || 0;
-
-      const sum = xs + s + m + l + xl + xxl;
-      const badge = document.getElementById('sizes-total-badge');
-      if (badge) badge.innerText = sum;
-
-      if (sum > 0) {
-        document.getElementById('form-item-qty').value = sum;
-        const passInput = document.getElementById('form-item-passed');
-        if (passInput) passInput.value = sum;
-      }
-    }
-
-    function handleOrderedQtyInput(val) {
-      const q = parseInt(val) || 0;
-      const passInput = document.getElementById('form-item-passed');
-      if (passInput) passInput.value = q;
-      document.getElementById('form-item-defects').value = 0;
-    }
-
-    function toggleQCInputs(status) {
-      const exp = document.getElementById('form-qc-expanded');
-      const hint = document.getElementById('qc-status-hint');
-      if (status === 'received') {
-        exp.classList.remove('hidden');
-        hint.innerText = 'Specify how many units passed inspection and if any defects were found.';
-        const q = parseInt(document.getElementById('form-item-qty').value) || 100;
-        document.getElementById('form-item-passed').value = q;
-        document.getElementById('form-item-defects').value = 0;
-      } else {
-        exp.classList.add('hidden');
-        hint.innerText = 'Item will appear under "Orders & In-Transit". You can inspect and receive it when the shipment arrives.';
-      }
-    }
-
-    function calculateDefectsFromPassed() {
-      const ord = parseInt(document.getElementById('form-item-qty').value) || 0;
-      const pass = parseInt(document.getElementById('form-item-passed').value) || 0;
-      document.getElementById('form-item-defects').value = Math.max(0, ord - pass);
-    }
-
-    function calculatePassedFromDefects() {
-      const ord = parseInt(document.getElementById('form-item-qty').value) || 0;
-      const defects = parseInt(document.getElementById('form-item-defects').value) || 0;
-      document.getElementById('form-item-passed').value = Math.max(0, ord - defects);
-    }
-
-    function openItemModal() {
-      const szIds = ['form-size-xs', 'form-size-s', 'form-size-m', 'form-size-l', 'form-size-xl', 'form-size-2xl'];
-      szIds.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-      const badge = document.getElementById('sizes-total-badge');
-      if (badge) badge.innerText = '0';
-      handleCategoryChange(document.getElementById('form-item-cat') ? document.getElementById('form-item-cat').value : 'VIP Gifts');
-      populateDropdowns();
-      document.getElementById('form-item-id').value = '';
-      document.getElementById('form-item-name').value = '';
-      document.getElementById('form-item-qty').value = '';
-      document.getElementById('form-item-cost').value = '';
-      document.getElementById('form-item-date').value = '2026-09-18';
-      document.getElementById('form-item-loc').value = '';
-      document.getElementById('form-item-status').value = 'pending';
-      toggleQCInputs('pending');
-      
-      const m = document.getElementById('modal-item');
-      if (m) {
-        m.classList.remove('hidden');
-        m.classList.add('flex');
-      }
-    }
-
-    function closeItemModal() {
-      const m = document.getElementById('modal-item');
-      if (m) {
-        m.classList.add('hidden');
-        m.classList.remove('flex');
-      }
-    }
-
-    function handleSaveItem(e) {
-      e.preventDefault();
-      const name = document.getElementById('form-item-name').value.trim();
-      const cat = document.getElementById('form-item-cat').value;
-      const vendorName = document.getElementById('form-item-vendor').value;
-      const rawQty = (document.getElementById('form-item-qty').value || '').toString().replace(/[^0-9]/g, '');
-      const rawCost = (document.getElementById('form-item-cost').value || '').toString().replace(/[^0-9.]/g, '');
-      const rawTarget = (document.getElementById('form-item-target')?.value || '').toString().replace(/[^0-9.]/g, '');
-      const qty = parseInt(rawQty) || 1;
-      const cost = parseFloat(rawCost) || 0;
-      const targetCost = parseFloat(rawTarget) || cost;
-      const date = document.getElementById('form-item-date').value || '2026-09-18';
-      const loc = document.getElementById('form-item-loc').value.trim();
-      const status = document.getElementById('form-item-status').value;
-
-      let passedQty = 0;
-      let failedQty = 0;
-
-      if (status === 'received') {
-        passedQty = parseInt(document.getElementById('form-item-passed').value) || qty;
-        failedQty = parseInt(document.getElementById('form-item-defects').value) || 0;
-      }
-
-      const newItem = {
-        id: `SKU-${Date.now().toString().slice(-4)}`,
-        poNumber: `PO-${Math.floor(100 + Math.random() * 900)}`,
-        name: name,
-        category: cat,
-        supplierName: vendorName,
-        expectedDeliveryDate: date,
-        orderedQty: qty,
-        receivedQty: status === 'received' ? qty : 0,
-        qcPassedQty: passedQty,
-        qcFailedQty: failedQty,
-        dispatchedQty: 0,
-        unitCost: cost,
-        targetPrice: targetCost,
-        storageLocation: loc || 'Main Warehouse',
-        hasSizes: cat === 'Merchandise'
-      };
-
-      if (cat === 'Merchandise') {
-        const xs = parseInt((document.getElementById('form-size-xs')?.value || '').replace(/[^0-9]/g, '')) || 0;
-        const s = parseInt((document.getElementById('form-size-s')?.value || '').replace(/[^0-9]/g, '')) || 0;
-        const m = parseInt((document.getElementById('form-size-m')?.value || '').replace(/[^0-9]/g, '')) || 0;
-        const l = parseInt((document.getElementById('form-size-l')?.value || '').replace(/[^0-9]/g, '')) || 0;
-        const xl = parseInt((document.getElementById('form-size-xl')?.value || '').replace(/[^0-9]/g, '')) || 0;
-        const xxl = parseInt((document.getElementById('form-size-2xl')?.value || '').replace(/[^0-9]/g, '')) || 0;
-
-        const sumSizes = xs + s + m + l + xl + xxl;
-        if (sumSizes > 0) {
-          const ratio = qty > 0 ? (passedQty / qty) : 1;
-          newItem.sizes = {
-            'XS': { ordered: xs, passed: Math.round(xs * ratio), dispatched: 0 },
-            'S': { ordered: s, passed: Math.round(s * ratio), dispatched: 0 },
-            'M': { ordered: m, passed: Math.round(m * ratio), dispatched: 0 },
-            'L': { ordered: l, passed: Math.round(l * ratio), dispatched: 0 },
-            'XL': { ordered: xl, passed: Math.round(xl * ratio), dispatched: 0 },
-            '2XL': { ordered: xxl, passed: Math.round(xxl * ratio), dispatched: 0 }
-          };
-        } else {
-          // If no custom sizes typed, default distribution
-          newItem.sizes = {
-            'S': { ordered: Math.round(qty * 0.2), passed: Math.round(passedQty * 0.2), dispatched: 0 },
-            'M': { ordered: Math.round(qty * 0.4), passed: Math.round(passedQty * 0.4), dispatched: 0 },
-            'L': { ordered: Math.round(qty * 0.3), passed: Math.round(passedQty * 0.3), dispatched: 0 },
-            'XL': { ordered: Math.round(qty * 0.1), passed: Math.round(passedQty * 0.1), dispatched: 0 }
-          };
-        }
-      }
-
-      appState.inventory.push(newItem);
-
-      if (status === 'received') {
-        appState.qcInspections.unshift({
-          id: `QC-${Date.now().toString().slice(-4)}`,
-          date: new Date().toISOString().split('T')[0],
-          skuId: newItem.id,
-          skuName: name,
-          supplierName: vendorName,
-          totalInspected: qty,
-          passed: passedQty,
-          failed: failedQty,
-          storageBin: loc || 'Main Warehouse',
-          vendorClaimAction: failedQty > 0 ? 'Defects recorded' : '100% Passed'
-        });
-      }
-
-      saveState();
-      closeItemModal();
-      showToast(status === 'received' 
-        ? `Order ${newItem.poNumber} saved and received (${passedQty} units QC passed)!` 
-        : `Order ${newItem.poNumber} placed with ${vendorName} (In-Transit)!`
-      );
-      renderAll();
-    }
-
-    function openQCModal() {
-      populateDropdowns();
-      const m = document.getElementById('modal-qc');
-      if (m) {
-        m.classList.remove('hidden');
-        m.classList.add('flex');
-      }
-    }
-    function closeQCModal() {
-      const m = document.getElementById('modal-qc');
-      if (m) {
-        m.classList.add('hidden');
-        m.classList.remove('flex');
-      }
-    }
-    function openQuickDispatchModal() {
-      switchTab('distribution');
-      document.getElementById('guest-name').focus();
     }
 
     function populateDropdowns() {
