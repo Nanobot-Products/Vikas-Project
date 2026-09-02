@@ -88,7 +88,7 @@
             <div class="flex items-center gap-2">
               <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white">Dashboard</h1>
               <span class="px-2 py-0.5 text-[11px] font-extrabold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                v2.3 Order Tracker
+                v2.4 Custom Sizes
               </span>
             </div>
             <p class="text-xs text-slate-400">Vikas Jeerawala • Procurement, Vendor & Distribution Suite</p>
@@ -670,7 +670,7 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Category *</label>
-            <select id="form-item-cat" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500">
+            <select id="form-item-cat" onchange="handleCategoryChange(this.value)" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500">
               <option value="VIP Gifts">VIP Gifts</option>
               <option value="Merchandise">Merchandise (T-Shirts/Bags)</option>
               <option value="Awards & Prizes">Awards & Prizes</option>
@@ -703,6 +703,44 @@
             <label class="block font-semibold text-slate-300 mb-1">Storage Room / Rack</label>
             <input type="text" id="form-item-loc" placeholder="e.g. Backstage Storage - Box 2" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500" />
           </div>
+        </div>
+
+        
+        <!-- NEW: Apparel Size Breakdown Box -->
+        <div id="form-size-breakdown-box" class="p-3.5 rounded-xl bg-slate-900 border border-slate-750 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="font-bold text-indigo-300 flex items-center gap-1.5">
+              <i data-lucide="shirt" class="w-4 h-4"></i> Enter Exact Sizes (XS to 2XL):
+            </label>
+            <span class="text-[11px] text-slate-400">Sum: <strong class="text-emerald-400" id="sizes-total-badge">0</strong> units</span>
+          </div>
+          <div class="grid grid-cols-6 gap-2 text-center text-xs">
+            <div>
+              <span class="block text-[11px] font-bold text-slate-400 mb-1">XS</span>
+              <input type="text" id="form-size-xs" placeholder="0" onfocus="this.select()" oninput="handleSizeInputChanged()" class="w-full p-2 text-center rounded-lg bg-slate-800 border border-slate-700 text-white font-bold" />
+            </div>
+            <div>
+              <span class="block text-[11px] font-bold text-slate-400 mb-1">S</span>
+              <input type="text" id="form-size-s" placeholder="0" onfocus="this.select()" oninput="handleSizeInputChanged()" class="w-full p-2 text-center rounded-lg bg-slate-800 border border-slate-700 text-white font-bold" />
+            </div>
+            <div>
+              <span class="block text-[11px] font-bold text-slate-400 mb-1">M</span>
+              <input type="text" id="form-size-m" placeholder="0" onfocus="this.select()" oninput="handleSizeInputChanged()" class="w-full p-2 text-center rounded-lg bg-slate-800 border border-slate-700 text-white font-bold" />
+            </div>
+            <div>
+              <span class="block text-[11px] font-bold text-slate-400 mb-1">L</span>
+              <input type="text" id="form-size-l" placeholder="0" onfocus="this.select()" oninput="handleSizeInputChanged()" class="w-full p-2 text-center rounded-lg bg-slate-800 border border-slate-700 text-white font-bold" />
+            </div>
+            <div>
+              <span class="block text-[11px] font-bold text-slate-400 mb-1">XL</span>
+              <input type="text" id="form-size-xl" placeholder="0" onfocus="this.select()" oninput="handleSizeInputChanged()" class="w-full p-2 text-center rounded-lg bg-slate-800 border border-slate-700 text-white font-bold" />
+            </div>
+            <div>
+              <span class="block text-[11px] font-bold text-slate-400 mb-1">2XL</span>
+              <input type="text" id="form-size-2xl" placeholder="0" onfocus="this.select()" oninput="handleSizeInputChanged()" class="w-full p-2 text-center rounded-lg bg-slate-800 border border-slate-700 text-white font-bold" />
+            </div>
+          </div>
+          <p class="text-[10px] text-slate-400">Type numbers in any size box above. It automatically sums them into Total Ordered Qty.</p>
         </div>
 
         <!-- QC Delivery Status -->
@@ -1723,6 +1761,37 @@
     }
 
     // Modal & Add Item Handling
+    
+    function handleCategoryChange(cat) {
+      const sizeBox = document.getElementById('form-size-breakdown-box');
+      if (sizeBox) {
+        if (cat === 'Merchandise') {
+          sizeBox.classList.remove('hidden');
+        } else {
+          sizeBox.classList.add('hidden');
+        }
+      }
+    }
+
+    function handleSizeInputChanged() {
+      const xs = parseInt(document.getElementById('form-size-xs').value.replace(/[^0-9]/g, '')) || 0;
+      const s = parseInt(document.getElementById('form-size-s').value.replace(/[^0-9]/g, '')) || 0;
+      const m = parseInt(document.getElementById('form-size-m').value.replace(/[^0-9]/g, '')) || 0;
+      const l = parseInt(document.getElementById('form-size-l').value.replace(/[^0-9]/g, '')) || 0;
+      const xl = parseInt(document.getElementById('form-size-xl').value.replace(/[^0-9]/g, '')) || 0;
+      const xxl = parseInt(document.getElementById('form-size-2xl').value.replace(/[^0-9]/g, '')) || 0;
+
+      const sum = xs + s + m + l + xl + xxl;
+      const badge = document.getElementById('sizes-total-badge');
+      if (badge) badge.innerText = sum;
+
+      if (sum > 0) {
+        document.getElementById('form-item-qty').value = sum;
+        const passInput = document.getElementById('form-item-passed');
+        if (passInput) passInput.value = sum;
+      }
+    }
+
     function handleOrderedQtyInput(val) {
       const q = parseInt(val) || 0;
       const passInput = document.getElementById('form-item-passed');
@@ -1758,6 +1827,11 @@
     }
 
     function openItemModal() {
+      const szIds = ['form-size-xs', 'form-size-s', 'form-size-m', 'form-size-l', 'form-size-xl', 'form-size-2xl'];
+      szIds.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      const badge = document.getElementById('sizes-total-badge');
+      if (badge) badge.innerText = '0';
+      handleCategoryChange(document.getElementById('form-item-cat') ? document.getElementById('form-item-cat').value : 'VIP Gifts');
       populateDropdowns();
       document.getElementById('form-item-id').value = '';
       document.getElementById('form-item-name').value = '';
@@ -1822,12 +1896,33 @@
       };
 
       if (cat === 'Merchandise') {
-        newItem.sizes = {
-          'S': { ordered: Math.round(qty * 0.2), passed: Math.round(passedQty * 0.2), dispatched: 0 },
-          'M': { ordered: Math.round(qty * 0.4), passed: Math.round(passedQty * 0.4), dispatched: 0 },
-          'L': { ordered: Math.round(qty * 0.3), passed: Math.round(passedQty * 0.3), dispatched: 0 },
-          'XL': { ordered: Math.round(qty * 0.1), passed: Math.round(passedQty * 0.1), dispatched: 0 }
-        };
+        const xs = parseInt((document.getElementById('form-size-xs')?.value || '').replace(/[^0-9]/g, '')) || 0;
+        const s = parseInt((document.getElementById('form-size-s')?.value || '').replace(/[^0-9]/g, '')) || 0;
+        const m = parseInt((document.getElementById('form-size-m')?.value || '').replace(/[^0-9]/g, '')) || 0;
+        const l = parseInt((document.getElementById('form-size-l')?.value || '').replace(/[^0-9]/g, '')) || 0;
+        const xl = parseInt((document.getElementById('form-size-xl')?.value || '').replace(/[^0-9]/g, '')) || 0;
+        const xxl = parseInt((document.getElementById('form-size-2xl')?.value || '').replace(/[^0-9]/g, '')) || 0;
+
+        const sumSizes = xs + s + m + l + xl + xxl;
+        if (sumSizes > 0) {
+          const ratio = qty > 0 ? (passedQty / qty) : 1;
+          newItem.sizes = {
+            'XS': { ordered: xs, passed: Math.round(xs * ratio), dispatched: 0 },
+            'S': { ordered: s, passed: Math.round(s * ratio), dispatched: 0 },
+            'M': { ordered: m, passed: Math.round(m * ratio), dispatched: 0 },
+            'L': { ordered: l, passed: Math.round(l * ratio), dispatched: 0 },
+            'XL': { ordered: xl, passed: Math.round(xl * ratio), dispatched: 0 },
+            '2XL': { ordered: xxl, passed: Math.round(xxl * ratio), dispatched: 0 }
+          };
+        } else {
+          // If no custom sizes typed, default distribution
+          newItem.sizes = {
+            'S': { ordered: Math.round(qty * 0.2), passed: Math.round(passedQty * 0.2), dispatched: 0 },
+            'M': { ordered: Math.round(qty * 0.4), passed: Math.round(passedQty * 0.4), dispatched: 0 },
+            'L': { ordered: Math.round(qty * 0.3), passed: Math.round(passedQty * 0.3), dispatched: 0 },
+            'XL': { ordered: Math.round(qty * 0.1), passed: Math.round(passedQty * 0.1), dispatched: 0 }
+          };
+        }
       }
 
       appState.inventory.push(newItem);
