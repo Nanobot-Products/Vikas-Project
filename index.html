@@ -88,7 +88,7 @@
             <div class="flex items-center gap-2">
               <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white">Dashboard</h1>
               <span class="px-2 py-0.5 text-[11px] font-extrabold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                v2.7 Item Deletion Enabled
+                v2.8 Vendor Quoted Qty & Target Budget
               </span>
             </div>
             <p class="text-xs text-slate-400">Vikas Jeerawala • Procurement, Vendor & Distribution Suite</p>
@@ -532,6 +532,7 @@
               <tr>
                 <th class="p-3">SKU Item</th>
                 <th class="p-3">Vendor</th>
+                <th class="p-3 text-center">Quoted Qty</th>
                 <th class="p-3 text-right">Quoted Rate</th>
                 <th class="p-3 text-right">GST %</th>
                 <th class="p-3 text-right">Total Amount</th>
@@ -610,15 +611,23 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-3 gap-3">
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Total Ordered Qty *</label>
-            <input type="text" id="form-item-qty" required placeholder="Enter qty (e.g. 200)" onfocus="this.select()" oninput="handleOrderedQtyInput(this.value)" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500 font-bold" />
+            <input type="text" id="form-item-qty" required placeholder="e.g. 200" onfocus="this.select()" oninput="handleOrderedQtyInput(this.value)" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500 font-bold" />
           </div>
           <div>
-            <label class="block font-semibold text-slate-300 mb-1">Unit Price (₹) *</label>
-            <input type="text" id="form-item-cost" required placeholder="Enter price (e.g. 120)" onfocus="this.select()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500 font-bold" />
+            <label class="block font-semibold text-slate-300 mb-1">Negotiated Price (₹) *</label>
+            <input type="text" id="form-item-cost" required placeholder="e.g. 120" onfocus="this.select()" oninput="updateItemSavingsPreview()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500 font-bold" />
           </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Target Budget (₹)</label>
+            <input type="text" id="form-item-target" placeholder="e.g. 150 (Cap)" onfocus="this.select()" oninput="updateItemSavingsPreview()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white focus:ring-2 focus:ring-indigo-500 font-bold" />
+          </div>
+        </div>
+        <div id="item-savings-preview-bar" class="p-2 rounded-xl bg-slate-900 border border-slate-750 text-xs text-slate-400 flex items-center justify-between">
+          <span>Target Budget Benchmark:</span>
+          <span id="item-savings-preview-text" class="font-bold text-emerald-400">₹0 Savings</span>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -807,15 +816,23 @@
           <label class="block font-semibold text-slate-300 mb-1">Select Supplier *</label>
           <select id="quote-vendor-select" required class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white"></select>
         </div>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Quoted Quantity *</label>
+            <input type="text" id="quote-qty" required placeholder="200" onfocus="this.select()" oninput="calculateQuoteTotalPreview()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold focus:ring-2 focus:ring-emerald-500" />
+          </div>
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Quoted Rate (₹) *</label>
-            <input type="text" id="quote-rate" required placeholder="540" onfocus="this.select()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold" />
+            <input type="text" id="quote-rate" required placeholder="540" onfocus="this.select()" oninput="calculateQuoteTotalPreview()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold focus:ring-2 focus:ring-emerald-500" />
           </div>
           <div>
             <label class="block font-semibold text-slate-300 mb-1">GST %</label>
-            <input type="text" id="quote-gst" value="12" onfocus="this.select()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold" />
+            <input type="text" id="quote-gst" value="12" onfocus="this.select()" oninput="calculateQuoteTotalPreview()" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold focus:ring-2 focus:ring-emerald-500" />
           </div>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-750 flex items-center justify-between text-xs">
+          <span class="text-slate-400 font-semibold">Total Quote Value (with GST):</span>
+          <span id="quote-total-preview" class="font-extrabold text-emerald-400">₹0</span>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
@@ -1008,7 +1025,7 @@
       document.getElementById('stat-sku-count').innerText = `${appState.inventory.length} SKUs`;
       document.getElementById('stat-pending-delivery').innerText = pendingUnits.toLocaleString();
       document.getElementById('stat-available').innerText = available.toLocaleString();
-      document.getElementById('stat-dispatched').innerText = `${totalDisp.toLocaleString()} given`;
+      document.getElementById('stat-dispatched').innerText = `${totalDisp.toLocaleString()} handed out`;
       document.getElementById('stat-qc-pass').innerText = `${passRate}%`;
       document.getElementById('stat-total-cost').innerText = `₹${totalCost.toLocaleString()}`;
       document.getElementById('stat-savings').innerText = `₹${totalSavings.toLocaleString()}`;
@@ -1497,6 +1514,7 @@
               <tr class="hover:bg-slate-800/50">
                 <td class="p-3 font-bold text-white">${q.skuName}</td>
                 <td class="p-3 text-slate-300">${q.vendorName}</td>
+                <td class="p-3 text-center font-bold text-indigo-300">${q.qty || 100} units</td>
                 <td class="p-3 text-right font-bold text-white">₹${parseFloat(q.unitRate).toLocaleString()}</td>
                 <td class="p-3 text-right text-slate-400">${q.gstPercent}%</td>
                 <td class="p-3 text-right font-bold text-emerald-400">₹${Math.round(tot).toLocaleString()}</td>
@@ -1557,9 +1575,43 @@
       renderAll();
     }
 
+    
+    function calculateQuoteTotalPreview() {
+      const q = parseFloat((document.getElementById('quote-qty')?.value || '0').replace(/[^0-9.]/g, '')) || 0;
+      const r = parseFloat((document.getElementById('quote-rate')?.value || '0').replace(/[^0-9.]/g, '')) || 0;
+      const gst = parseFloat((document.getElementById('quote-gst')?.value || '12').replace(/[^0-9.]/g, '')) || 12;
+      const total = q * r * (1 + gst / 100);
+      const el = document.getElementById('quote-total-preview');
+      if (el) el.innerText = `₹${Math.round(total).toLocaleString()}`;
+    }
+
+    function updateItemSavingsPreview() {
+      const qty = parseFloat((document.getElementById('form-item-qty')?.value || '0').replace(/[^0-9.]/g, '')) || 0;
+      const cost = parseFloat((document.getElementById('form-item-cost')?.value || '0').replace(/[^0-9.]/g, '')) || 0;
+      const target = parseFloat((document.getElementById('form-item-target')?.value || '0').replace(/[^0-9.]/g, '')) || cost;
+      const el = document.getElementById('item-savings-preview-text');
+      if (el) {
+        if (target > cost) {
+          const savPerUnit = target - cost;
+          const totSav = savPerUnit * qty;
+          el.innerText = `₹${savPerUnit.toLocaleString()}/unit saving (₹${totSav.toLocaleString()} total saved)`;
+        } else {
+          el.innerText = `On Budget (₹0 Variance)`;
+        }
+      }
+    }
+
     function openQuoteModal() {
       populateDropdowns();
       document.getElementById('quote-rate').value = '';
+      const skuSel = document.getElementById('quote-sku-select');
+      if (skuSel && skuSel.value) {
+        const item = appState.inventory.find(i => i.id === skuSel.value);
+        document.getElementById('quote-qty').value = item ? item.orderedQty : '100';
+      } else {
+        document.getElementById('quote-qty').value = '100';
+      }
+      calculateQuoteTotalPreview();
       
       const m = document.getElementById('modal-quote');
       if (m) {
@@ -1580,8 +1632,9 @@
       e.preventDefault();
       const skuId = document.getElementById('quote-sku-select').value;
       const vendId = document.getElementById('quote-vendor-select').value;
-      const rate = parseFloat(document.getElementById('quote-rate').value) || 0;
-      const gst = parseFloat(document.getElementById('quote-gst').value) || 12;
+      const qtyVal = parseInt((document.getElementById('quote-qty').value || '').replace(/[^0-9]/g, '')) || 100;
+      const rate = parseFloat((document.getElementById('quote-rate').value || '').replace(/[^0-9.]/g, '')) || 0;
+      const gst = parseFloat((document.getElementById('quote-gst').value || '12').replace(/[^0-9.]/g, '')) || 12;
       const lead = parseInt(document.getElementById('quote-lead').value) || 12;
       const buffer = parseInt(document.getElementById('quote-buffer').value) || 8;
       const status = document.getElementById('quote-status').value;
@@ -1597,7 +1650,7 @@
         vendorName: vend ? vend.name : 'Supplier',
         unitRate: rate,
         gstPercent: gst,
-        qty: sku ? sku.orderedQty : 100,
+        qty: qtyVal,
         leadTimeDays: lead,
         bufferDays: buffer,
         status: status
@@ -1845,8 +1898,10 @@
       const vendorName = document.getElementById('form-item-vendor').value;
       const rawQty = (document.getElementById('form-item-qty').value || '').toString().replace(/[^0-9]/g, '');
       const rawCost = (document.getElementById('form-item-cost').value || '').toString().replace(/[^0-9.]/g, '');
+      const rawTarget = (document.getElementById('form-item-target')?.value || '').toString().replace(/[^0-9.]/g, '');
       const qty = parseInt(rawQty) || 1;
       const cost = parseFloat(rawCost) || 0;
+      const targetCost = parseFloat(rawTarget) || cost;
       const date = document.getElementById('form-item-date').value || '2026-09-18';
       const loc = document.getElementById('form-item-loc').value.trim();
       const status = document.getElementById('form-item-status').value;
@@ -1872,6 +1927,7 @@
         qcFailedQty: failedQty,
         dispatchedQty: 0,
         unitCost: cost,
+        targetPrice: targetCost,
         storageLocation: loc || 'Main Warehouse',
         hasSizes: cat === 'Merchandise'
       };
